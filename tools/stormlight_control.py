@@ -95,6 +95,14 @@ class StormlightControl:
         """Get status of all tools"""
         status = {}
         
+        # Check AI status
+        import os
+        ai_available = bool(os.getenv('OPENAI_API_KEY'))
+        status['ai'] = {
+            'available': ai_available,
+            'status': '✅ Active' if ai_available else '⚠️ Not configured'
+        }
+        
         # Styleframe Manager Status
         styleframes_metadata = self.project_root / "01_styleframes_midjourney" / "styleframes_metadata.json"
         if styleframes_metadata.exists():
@@ -181,6 +189,7 @@ class StormlightControl:
             f"""🔥 Status: {sf_status.get('status', '❓ Unknown')}
 🎭 Scenes: [bold yellow]{sf_status.get('scenes', 0)}[/bold yellow] | 🖼️ Frames: [bold magenta]{sf_status.get('frames', 0)}[/bold magenta]
 [dim italic]Interactive workflow • Auto optimization[/dim italic]
+[bold cyan]🤖 AI Enhancement Available![/bold cyan]
 [bold green on black] 🚀 Press 'S' to launch! 🚀 [/bold green on black]""",
             title="🎨 Styleframes 🎨",
             border_style="bright_cyan" if sf_status.get('health') == 'healthy' else "bright_yellow",
@@ -195,6 +204,7 @@ class StormlightControl:
             f"""⚡ Status: {vg_status.get('status', '❓ Unknown')}
 ✅ Completed: [bold green]{vg_status.get('completed', 0)}[/bold green] | 💰 Cost: [bold red]${vg_status.get('cost', 0):.2f}[/bold red]
 [dim italic]Veo 3 via Gemini API[/dim italic]
+[bold cyan]🤖 AI Prompt Enhancement![/bold cyan]
 [bold green on black] 🎥 Press 'V' to generate! 🎥 [/bold green on black]""",
             title="🎬 Video Gen 🎬",
             border_style="bright_magenta" if vg_status.get('health') == 'healthy' else "bright_yellow",
@@ -244,6 +254,7 @@ class StormlightControl:
         """Create quick stats overview"""
         vg_status = status.get('video_gen', {})
         sf_status = status.get('styleframes', {})
+        ai_status = status.get('ai', {})
         
         stats_table = Table(show_header=False, box=None, padding=(0, 2))
         stats_table.add_column("Metric", style="bold")
@@ -261,7 +272,7 @@ class StormlightControl:
         )
         stats_table.add_row(
             "⚡ Active Jobs", f"[bold cyan]{vg_status.get('active', 0)}[/bold cyan]",
-            "📚 Story Docs", f"[bold blue]{status.get('story', {}).get('files', 0)}[/bold blue]"
+            "🤖 AI Status", f"[bold cyan]{ai_status.get('status', '❓ Unknown')}[/bold cyan]"
         )
         
         return Panel(
