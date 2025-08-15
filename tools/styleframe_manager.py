@@ -42,6 +42,9 @@ class StyleframeManager:
             dir_path.mkdir(parents=True, exist_ok=True)
         
         self.console = Console()
+        
+        # Project-agnostic story development detection
+        self.story_dev_dir = self.project_root / "07_story_development"
     
     def organize_styleframe(self, 
                            image_path: Path, 
@@ -153,48 +156,35 @@ class StyleframeManager:
 
     
     def _generate_raw_prompts(self, scene_name: str, base_description: str, start_frame_path: str = None) -> Dict[str, str]:
-        """Generate clean prompts optimized for --style raw"""
+        """Generate simple, content-focused prompts optimized for V7 Style References"""
         
-        # Scene-specific style keywords (minimal)
-        scene_styles = {
-            "kaladin": "stormy dramatic navy gray",
-            "bridge": "action earth tones dust",
-            "highstorm": "electric blue storm massive",
-            "shattered_plains": "alien crystal desolate",
-            "spren": "ethereal glowing mystical",
-            "title": "epic cinematic storm"
-        }
-        
-        # Scene-specific start/end variations
+        # Scene-specific content variations (no style words to avoid conflicts)
         scene_variations = {
             "title_sequence": {
-                "start": "empty sky with dramatic clouds, clear space for title overlay",
-                "end": "same composition with dramatic sky, clear central area for title overlay"
+                "start": "sweeping aerial view of alien landscape with stormy skies",
+                "end": "same landscape composition with dramatic storm clouds"
             },
             "kaladin_intro": {
-                "start": "close-up focus on face and expression",
-                "end": "wider shot showing full context and environment"
+                "start": "close-up portrait of dark-haired young man with slave brands",
+                "end": "wider shot showing the same character in full context"
             },
             "adolin_intro": {
-                "start": "confident stance in training position",
-                "end": "mid-sword technique demonstration"
+                "start": "portrait of handsome young man in military uniform",
+                "end": "same character demonstrating sword technique"
             },
             "dalinar_intro": {
-                "start": "studying maps with intense concentration",
-                "end": "looking up with commanding presence"
+                "start": "older man in ornate armor studying battle maps",
+                "end": "same character looking up with commanding presence"
             },
             "shattered_plains": {
-                "start": "high aerial view showing plateau tops",
-                "end": "diving down into chasm depths with mist"
+                "start": "high aerial view of plateau tops and chasm system",
+                "end": "deep inside chasm looking up at canyon walls with mist"
+            },
+            "shattered_plains_reveal": {
+                "start": "high aerial view of plateau tops and chasm system",
+                "end": "deep inside chasm looking up at canyon walls with mist"
             }
         }
-        
-        # Determine scene style
-        style_keywords = "epic cinematic"  # default
-        for keyword, style in scene_styles.items():
-            if keyword in scene_name.lower():
-                style_keywords = style
-                break
         
         # Get scene-specific variations or use defaults
         variations = scene_variations.get(scene_name, {
@@ -202,22 +192,20 @@ class StyleframeManager:
             "end": "closer detailed view"
         })
         
-        # Base prompt components with text avoidance (simplified to avoid weight conflicts)
-        text_avoidance = "--no text --no typography"
-        base_prompt = f"{base_description} {style_keywords} dramatic lighting Arcane style by Fortiche {text_avoidance} --style raw --ar 16:9 --q 2"
-        
+        # Simple, content-focused prompts (V7 Style References best practice)
         prompts = {
-            "start_frame": f"{base_description} {variations['start']} {style_keywords} dramatic lighting Arcane style by Fortiche {text_avoidance} --style raw --ar 16:9 --q 2"
+            "start_frame": f"{base_description} {variations['start']} --no text --ar 16:9 --q 2"
         }
         
-        # End frame uses start frame as style reference if available
+        # End frame workflow depends on whether we have style references
         if start_frame_path:
-            prompts["end_frame_variation"] = f"{variations['end']} {style_keywords} dramatic lighting {text_avoidance}"
-            prompts["end_frame_full"] = f"{base_description} {variations['end']} {style_keywords} dramatic lighting Arcane style by Fortiche {text_avoidance} --style raw --ar 16:9 --q 2"
-            prompts["workflow_note"] = "EDITOR WORKFLOW: 1) Generate start frame, 2) Upload to Midjourney web UI, 3) Click 'Edit', 4) Use 'Erase/Smart Erase' on sky area, 5) Submit Edit with variation prompt. Text added in post-production."
+            # V7 Style References workflow - simple content prompts
+            prompts["end_frame_simple"] = f"{variations['end']} --sw 300 --ar 16:9 --q 2"
+            prompts["end_frame_detailed"] = f"{base_description} {variations['end']} --sw 300 --ar 16:9 --q 2"
+            prompts["workflow_note"] = "V7 STYLE REFERENCES WORKFLOW: 1) Generate start frame with simple content prompt, 2) Click start frame to expand, 3) Add Style References (upload previous clip + start frame), 4) Use simple descriptive prompts (avoid style words), 5) Adjust --sw 200-400 for style strength, 6) Generate variations. Let references handle the style!"
         else:
-            prompts["end_frame"] = f"{base_description} {variations['end']} {style_keywords} dramatic lighting Arcane style by Fortiche {text_avoidance} --style raw --ar 16:9 --q 2"
-            prompts["workflow_note"] = "WORKFLOW: 1) Generate start frame first, 2) Use Midjourney Editor to erase sky area and add title space. Text will be added in post-production."
+            prompts["end_frame"] = f"{base_description} {variations['end']} --no text --ar 16:9 --q 2"
+            prompts["workflow_note"] = "V7 WORKFLOW: 1) Generate start frame first with simple content description, 2) Then use Style References workflow for matching end frame. Avoid style words that conflict with references."
         
         return prompts
     
@@ -281,20 +269,28 @@ class StyleframeManager:
             
             # Always show start frame first and clearly
             if "start_frame" in prompts:
-                f.write("🎬 STEP 1 - Generate Start Frame:\n")
+                f.write("🎬 STEP 1 - Generate Start Frame (Simple Content Prompt):\n")
                 f.write(f"{prompts['start_frame']}\n\n")
             
             # Show workflow note
             if "workflow_note" in prompts:
-                f.write("📋 Next Steps:\n")
+                f.write("📋 V7 Style References Workflow:\n")
                 f.write(f"{prompts['workflow_note']}\n\n")
             
-            # Show other prompts for reference
-            f.write("📝 Reference (for later steps):\n")
+            # Show end frame prompts for Style References
+            f.write("🎨 STEP 2 - End Frame with Style References:\n")
             for frame_type, prompt in prompts.items():
                 if frame_type not in ["start_frame", "workflow_note"]:
-                    f.write(f"{frame_type.replace('_', ' ').title()}:\n")
+                    if "simple" in frame_type:
+                        f.write(f"Simple Content Prompt (Recommended):\n")
+                    elif "detailed" in frame_type:
+                        f.write(f"Detailed Content Prompt (Alternative):\n")
+                    else:
+                        f.write(f"{frame_type.replace('_', ' ').title()}:\n")
                     f.write(f"{prompt}\n\n")
+            
+            f.write("💡 Remember: Upload your start frame + any previous clip as Style References!\n")
+            f.write("💡 Use --sw 200-400 to control style influence strength.\n")
         
         console.print(f"💾 Saved: {filepath}")
 
@@ -305,21 +301,32 @@ class StyleframeManager:
             style="bold blue"
         ))
         
-        # Step 1: Generate prompts
-        console.print("\n[bold yellow]Step 1: Generating Midjourney prompts...[/bold yellow]")
+        # Step 1: Introduce V7 Style References Workflow
+        console.print("\n[bold cyan]🎨 Midjourney V7 Style References Workflow[/bold cyan]")
+        console.print("This workflow uses Style References for consistent visual style across clips.")
+        console.print("\n[bold yellow]✅ V7 Best Practices:[/bold yellow]")
+        console.print("• [bold green]Simple Prompts:[/bold green] Focus on content, not style words")
+        console.print("• [bold green]Style References:[/bold green] Upload images to control visual style")
+        console.print("• [bold green]Style Weight:[/bold green] Use --sw 200-400 to control influence")
+        console.print("• [bold red]Avoid:[/bold red] 'copy this style', 'the look of this image but...'")
+        console.print("• [bold green]Good:[/bold green] 'detailed portrait of Kaladin', 'chasm depths with mist'")
+        
+        # Generate prompts
+        console.print("\n[bold yellow]Step 1: Generate simple start frame prompt...[/bold yellow]")
         prompts = self.generate_midjourney_prompts(scene_name, base_description)
         
         # Display start frame prompt (plain text for easy copying)
-        console.print("\n[bold green]🎨 Copy this prompt to Midjourney:[/bold green]")
+        console.print("\n[bold green]🎨 Start Frame Prompt (Simple & Content-Focused):[/bold green]")
         console.print("=" * 80)
         console.print(prompts["start_frame"])
         console.print("=" * 80)
         
         # Wait for user to generate start frame
         console.print("\n[bold yellow]Step 2: Generate your start frame[/bold yellow]")
-        console.print("1. Copy the prompt above")
+        console.print("1. Copy the simple prompt above")
         console.print("2. Paste it into Midjourney")
         console.print("3. Generate and save your favorite result")
+        console.print("4. [bold cyan]Note:[/bold cyan] This will be your style reference for the end frame")
         
         if not Confirm.ask("\nHave you generated and saved your start frame?"):
             console.print("❌ Come back when you have your start frame ready!")
@@ -329,22 +336,15 @@ class StyleframeManager:
         console.print("\n[bold yellow]Step 3: Organize your start frame[/bold yellow]")
         console.print("💡 Save your image to tmp/tmp.png (will auto-optimize to JPG)")
         
-        # Check for both PNG and JPG in tmp
+        # Check for both PNG and JPG in tmp, default to PNG
         png_path = Path("tmp/tmp.png")
         jpg_path = Path("tmp/tmp.jpg")
         
         if png_path.exists():
-            if Confirm.ask(f"Use {png_path} (will optimize)?", default=True):
-                start_frame_path = png_path
-            else:
-                start_frame_path = Path(Prompt.ask("Enter the path to your start frame image"))
+            start_frame_path = png_path
         elif jpg_path.exists():
-            if Confirm.ask(f"Use {jpg_path}?", default=True):
-                start_frame_path = jpg_path
-            else:
-                start_frame_path = Path(Prompt.ask("Enter the path to your start frame image"))
+            start_frame_path = jpg_path
         else:
-            console.print("❌ No tmp/tmp.png or tmp/tmp.jpg found")
             start_frame_path = Path(Prompt.ask("Enter the path to your start frame image"))
         
         if not start_frame_path.exists():
@@ -365,30 +365,50 @@ class StyleframeManager:
             console.print(f"❌ Error organizing start frame: {e}")
             return
         
-        # Step 4: Generate end frame with style reference
-        console.print("\n[bold yellow]Step 4: Generate matching end frame[/bold yellow]")
-        console.print("Now we'll create an end frame that perfectly matches your start frame style.")
+        # Step 4: V7 Style References End Frame Workflow
+        console.print("\n[bold yellow]Step 4: Generate matching end frame with Style References[/bold yellow]")
+        console.print("Now we'll use V7 Style References to create a perfectly matching end frame.")
         
         # Generate prompts with start frame reference
         ref_prompts = self.generate_midjourney_prompts(scene_name, base_description, str(entry['path']))
         
-        console.print("\n[bold cyan]Midjourney Editor Workflow:[/bold cyan]")
-        console.print("1. Go to Midjourney web UI and upload your start frame")
-        console.print("2. Click 'Edit' to open the Editor")
-        console.print("3. Use 'Erase' or 'Smart Erase' tool to select the sky area where you want the title")
-        console.print("4. Click 'Submit Edit' and use this prompt:")
+        # Check for previous clip's end frame for consistency
+        prev_clip_ref = self._get_previous_clip_reference(scene_name)
         
-        if "end_frame_variation" in ref_prompts:
-            console.print("\n[bold green]🎨 Editor Prompt:[/bold green]")
+        console.print("\n[bold cyan]🎨 V7 Style References Step-by-Step:[/bold cyan]")
+        console.print("1. [bold yellow]Click Your Start Frame:[/bold yellow] Click the start frame you just generated to expand it")
+        console.print("2. [bold yellow]Find 'Style References':[/bold yellow] Look for the Style References section in the expanded view")
+        console.print("3. [bold yellow]Upload References:[/bold yellow]")
+        
+        if prev_clip_ref:
+            console.print(f"   📁 [bold green]Previous Clip:[/bold green] Upload {prev_clip_ref} for visual continuity")
+        
+        console.print(f"   📁 [bold green]Start Frame:[/bold green] Upload your start frame: {entry['path']}")
+        console.print("4. [bold yellow]Simple Content Prompt:[/bold yellow] Use the clean prompt below (no style words!)")
+        console.print("5. [bold yellow]Set Style Weight:[/bold yellow] Add --sw 200-400 (higher = stronger style influence)")
+        console.print("6. [bold yellow]Generate Variations:[/bold yellow] Create multiple options and save the best")
+        
+        # Show the simple prompts
+        if "end_frame_simple" in ref_prompts:
+            console.print("\n[bold green]🎨 Simple Content Prompt (Recommended):[/bold green]")
             console.print("=" * 60)
-            console.print(ref_prompts["end_frame_variation"])
+            console.print(ref_prompts["end_frame_simple"])
             console.print("=" * 60)
         
-        console.print("\n[bold yellow]💡 Optional Tools:[/bold yellow]")
-        console.print("• Use 'Pan' to adjust framing if needed")
-        console.print("• Use 'Zoom Out' for wider composition")
-        console.print("• Use 'Crop' to fine-tune the aspect ratio")
-        console.print("• All tools can be combined with 'Remix' for variations")
+        if "end_frame_detailed" in ref_prompts:
+            console.print("\n[bold green]🎨 Alternative Detailed Prompt:[/bold green]")
+            console.print("=" * 60)
+            console.print(ref_prompts["end_frame_detailed"])
+            console.print("=" * 60)
+        
+        console.print("\n[bold yellow]💡 V7 Style References Best Practices:[/bold yellow]")
+        console.print("• [bold green]✅ GOOD:[/bold green] 'detailed portrait of Kaladin', 'chasm depths with mist'")
+        console.print("• [bold red]❌ BAD:[/bold red] 'the look of this image but...', 'copy this style and...'")
+        console.print("• [bold cyan]CONTENT FOCUS:[/bold cyan] Describe what you want to see, not how to modify references")
+        console.print("• [bold cyan]STYLE WEIGHT:[/bold cyan] --sw 0-1000 (default 100, try 200-400 for stronger influence)")
+        console.print("• [bold cyan]MULTIPLE REFS:[/bold cyan] Upload 2-3 reference images for best consistency")
+        console.print("• [bold cyan]NO STYLE CONFLICTS:[/bold cyan] Avoid style words that fight your uploaded references")
+        console.print("• [bold cyan]WEB UI ONLY:[/bold cyan] Upload images directly, no --sref URLs needed")
         
         # Wait for end frame generation
         if not Confirm.ask("\nHave you generated your end frame?"):
@@ -400,22 +420,15 @@ class StyleframeManager:
         console.print("\n[bold yellow]Step 5: Organize your end frame[/bold yellow]")
         console.print("💡 Save your end frame to tmp/tmp.png (will auto-optimize)")
         
-        # Check for both PNG and JPG in tmp for end frame
+        # Check for both PNG and JPG in tmp for end frame, default to PNG
         png_path = Path("tmp/tmp.png")
         jpg_path = Path("tmp/tmp.jpg")
         
         if png_path.exists():
-            if Confirm.ask(f"Use {png_path} for end frame (will optimize)?", default=True):
-                end_frame_path = png_path
-            else:
-                end_frame_path = Path(Prompt.ask("Enter the path to your end frame image"))
+            end_frame_path = png_path
         elif jpg_path.exists():
-            if Confirm.ask(f"Use {jpg_path} for end frame?", default=True):
-                end_frame_path = jpg_path
-            else:
-                end_frame_path = Path(Prompt.ask("Enter the path to your end frame image"))
+            end_frame_path = jpg_path
         else:
-            console.print("❌ No tmp/tmp.png or tmp/tmp.jpg found")
             end_frame_path = Path(Prompt.ask("Enter the path to your end frame image"))
         
         if not end_frame_path.exists():
@@ -448,6 +461,203 @@ class StyleframeManager:
         # Save prompts for reference
         self._save_prompts_to_files(scene_name, ref_prompts)
         console.print(f"💾 All prompts saved for future reference")
+        
+        # Auto-progression options
+        self._offer_next_steps(scene_name, base_description)
+
+    def _offer_next_steps(self, scene_name: str, base_description: str) -> None:
+        """Offer automatic progression to next steps"""
+        console.print("\n[bold yellow]🚀 What's next?[/bold yellow]")
+        
+        # Option 1: Generate video immediately
+        if Confirm.ask("Generate Veo3 video now?", default=True):
+            console.print(f"\n[bold green]Launching video generation...[/bold green]")
+            console.print(f"[dim]Command: python3 tools/generate_veo3.py \"{base_description}\" --scene {scene_name}[/dim]")
+            
+            try:
+                import subprocess
+                subprocess.run([
+                    'python3', 'tools/generate_veo3.py', 
+                    f"{base_description} cinematic camera movement dramatic lighting",
+                    '--scene', scene_name
+                ])
+            except Exception as e:
+                console.print(f"❌ Error launching video generation: {e}")
+                console.print(f"💡 Run manually: python3 tools/generate_veo3.py \"{base_description}\" --scene {scene_name}")
+        
+        # Option 2: Open next story clip
+        next_clip = self._get_next_clip(scene_name)
+        if next_clip:
+            if Confirm.ask(f"Open next clip ({next_clip}) in story development?", default=True):
+                console.print(f"\n[bold cyan]Opening {next_clip} for reference...[/bold cyan]")
+                try:
+                    import subprocess
+                    subprocess.run(['open', f'07_story_development/act1_world_introduction.md'])
+                except Exception as e:
+                    console.print(f"💡 Manually open: 07_story_development/act1_world_introduction.md")
+        
+        # Option 3: Return to Control Center
+        if Confirm.ask("Return to Stormlight Control Center?", default=False):
+            try:
+                import subprocess
+                subprocess.run(['python3', 'tools/stormlight_control.py'])
+            except Exception as e:
+                console.print(f"💡 Run manually: python3 tools/stormlight_control.py")
+
+    def _get_next_clip(self, current_scene: str) -> Optional[str]:
+        """Determine the next clip in the sequence"""
+        # Act I clip sequence mapping
+        act1_sequence = [
+            "title_sequence",
+            "shattered_plains_reveal", 
+            "kaladin_intro",
+            "adolin_intro",
+            "magic_system",
+            "dalinar_intro",
+            "spren_bonds",
+            "parshendi_intro",
+            "highstorm_approaching"
+        ]
+        
+        try:
+            current_index = act1_sequence.index(current_scene)
+            if current_index < len(act1_sequence) - 1:
+                return act1_sequence[current_index + 1]
+        except ValueError:
+            # Scene not in sequence, no next clip
+            pass
+        
+        return None
+
+    def _get_previous_clip_reference(self, current_scene: str) -> Optional[str]:
+        """
+        Get the end frame from the previous clip for visual consistency.
+        Returns the file path to the previous clip's end frame.
+        """
+        # Act I sequence mapping (same as before)
+        act1_sequence = [
+            "title_sequence",
+            "shattered_plains_reveal", 
+            "kaladin_intro",
+            "adolin_intro",
+            "magic_system",
+            "dalinar_intro",
+            "spren_bonds",
+            "parshendi_intro",
+            "highstorm_approaching"
+        ]
+        
+        try:
+            current_index = act1_sequence.index(current_scene)
+            if current_index > 0:  # Not the first clip
+                prev_scene = act1_sequence[current_index - 1]
+                
+                # Look for the previous scene's end frame
+                prev_end_frame = self.get_best_reference_image(prev_scene, "end")
+                if prev_end_frame and prev_end_frame.exists():
+                    return str(prev_end_frame.relative_to(self.project_root))
+        except ValueError:
+            # Current scene not in sequence, try to find any previous clip
+            metadata = self._load_metadata()
+            scene_names = list(metadata.keys())
+            
+            # Find scenes with end frames, get the most recent one
+            for scene in reversed(scene_names):  # Most recent first
+                if scene != current_scene:
+                    end_frame = self.get_best_reference_image(scene, "end")
+                    if end_frame and end_frame.exists():
+                        return str(end_frame.relative_to(self.project_root))
+        
+        return None
+
+
+
+    def detect_next_clip_from_story(self) -> Optional[tuple[str, str]]:
+        """
+        Parse story development files to find the next clip to work on.
+        Returns (scene_name, description) tuple or None.
+        Project-agnostic - works with any markdown story structure.
+        """
+        if not self.story_dev_dir.exists():
+            return None
+        
+        # Look for markdown files in story development
+        story_files = list(self.story_dev_dir.glob("*.md"))
+        if not story_files:
+            return None
+        
+        # Get existing scenes from metadata
+        existing_scenes = set(self._load_metadata().keys())
+        
+        # Parse each story file for clip definitions
+        for story_file in story_files:
+            clips = self._parse_clips_from_markdown(story_file)
+            
+            # Find first clip that doesn't have styleframes yet
+            for scene_name, description in clips:
+                if scene_name not in existing_scenes:
+                    return (scene_name, description)
+        
+        return None
+
+    def _parse_clips_from_markdown(self, markdown_file: Path) -> List[tuple[str, str]]:
+        """
+        Parse markdown file to extract clip definitions.
+        Looks for patterns like:
+        ### Clip X: Scene Name (timing)
+        **Visual**: Description here
+        """
+        clips = []
+        
+        try:
+            with open(markdown_file, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            import re
+            
+            # Pattern to match clip sections
+            # Matches: ### Clip X: Title (timing) followed by **Visual**: description
+            clip_pattern = r'### Clip \d+: ([^(]+)\([^)]+\)\s*\n[^*]*\*\*Visual\*\*: ([^\n]+(?:\n- [^\n]+)*)'
+            
+            matches = re.findall(clip_pattern, content, re.MULTILINE | re.DOTALL)
+            
+            for title, visual_desc in matches:
+                # Clean up the title to create scene_name
+                scene_name = title.strip().lower()
+                scene_name = re.sub(r'[^\w\s-]', '', scene_name)  # Remove special chars
+                scene_name = re.sub(r'\s+', '_', scene_name)      # Replace spaces with underscores
+                scene_name = scene_name.strip('_')                # Remove leading/trailing underscores
+                
+                # Clean up visual description
+                visual_desc = visual_desc.strip()
+                # Remove bullet points and extra whitespace
+                visual_desc = re.sub(r'\n- ', ' ', visual_desc)
+                visual_desc = re.sub(r'\s+', ' ', visual_desc)
+                
+                if scene_name and visual_desc:
+                    clips.append((scene_name, visual_desc))
+        
+        except Exception as e:
+            console.print(f"⚠️  Error parsing {markdown_file}: {e}")
+        
+        return clips
+
+    def suggest_next_clip(self) -> Optional[tuple[str, str]]:
+        """
+        Suggest the next clip to work on based on story development files.
+        Returns (scene_name, description) or None.
+        """
+        next_clip = self.detect_next_clip_from_story()
+        if next_clip:
+            scene_name, description = next_clip
+            console.print(f"\n[bold cyan]📖 Next clip detected from story:[/bold cyan]")
+            console.print(f"[bold yellow]Scene:[/bold yellow] {scene_name}")
+            console.print(f"[bold yellow]Description:[/bold yellow] {description[:100]}{'...' if len(description) > 100 else ''}")
+            
+            if Confirm.ask(f"Work on '{scene_name}' next?", default=True):
+                return next_clip
+        
+        return None
 
     def _optimize_image(self, source_path: Path, target_path: Path) -> bool:
         """
@@ -528,8 +738,8 @@ def main():
     
     # Interactive workflow command
     interactive_parser = subparsers.add_parser("interactive", help="Interactive workflow for complete styleframe creation")
-    interactive_parser.add_argument("scene_name", help="Scene name")
-    interactive_parser.add_argument("description", help="Base scene description")
+    interactive_parser.add_argument("scene_name", nargs='?', help="Scene name (auto-detected if not provided)")
+    interactive_parser.add_argument("description", nargs='?', help="Base scene description (auto-detected if not provided)")
     
     args = parser.parse_args()
     
@@ -558,13 +768,28 @@ def main():
     elif args.command == "prompts":
         start_ref = getattr(args, 'start_ref', None)
         prompts = manager.generate_midjourney_prompts(args.scene_name, args.description, start_ref)
-        console.print(f"\n🎨 Midjourney Prompts for {args.scene_name}:\n")
+        console.print(f"\n🎨 V7 Style References Prompts for {args.scene_name}:\n")
         
+        # Show start frame first
+        if "start_frame" in prompts:
+            console.print(f"[bold green]🎬 Start Frame (Simple Content):[/bold green]")
+            console.print(f"{prompts['start_frame']}\n")
+        
+        # Show workflow note
+        if "workflow_note" in prompts:
+            console.print(f"[bold yellow]📋 V7 Workflow:[/bold yellow]")
+            console.print(f"{prompts['workflow_note']}\n")
+        
+        # Show end frame options
+        console.print(f"[bold cyan]🎨 End Frame Options (Use with Style References):[/bold cyan]")
         for frame_type, prompt in prompts.items():
-            if frame_type == "workflow_note":
-                console.print(f"[bold yellow]📋 {prompt}[/bold yellow]\n")
-            else:
-                console.print(f"[bold cyan]{frame_type.replace('_', ' ').title()}:[/bold cyan]")
+            if frame_type not in ["start_frame", "workflow_note"]:
+                if "simple" in frame_type:
+                    console.print(f"[bold green]Simple Content (Recommended):[/bold green]")
+                elif "detailed" in frame_type:
+                    console.print(f"[bold green]Detailed Content:[/bold green]")
+                else:
+                    console.print(f"[bold cyan]{frame_type.replace('_', ' ').title()}:[/bold cyan]")
                 console.print(f"{prompt}\n")
         
         # Save to files if requested
@@ -579,7 +804,24 @@ def main():
             console.print(f"❌ No reference images found for {args.scene_name}")
     
     elif args.command == "interactive":
-        manager.interactive_workflow(args.scene_name, args.description)
+        scene_name = args.scene_name
+        description = args.description
+        
+        # Auto-detect next clip if not provided
+        if not scene_name or not description:
+            console.print("[bold cyan]🔍 Auto-detecting next clip from story development...[/bold cyan]")
+            next_clip = manager.suggest_next_clip()
+            
+            if next_clip:
+                scene_name, description = next_clip
+            else:
+                # Fallback to manual input
+                if not scene_name:
+                    scene_name = Prompt.ask("Scene name (e.g., 'kaladin_intro')")
+                if not description:
+                    description = Prompt.ask("Scene description")
+        
+        manager.interactive_workflow(scene_name, description)
 
 
 if __name__ == "__main__":

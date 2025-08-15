@@ -1,0 +1,16 @@
+Midjourney Prompts for shattered_plains_reveal
+==================================================
+Generated: 2025-08-15 21:09:18
+
+🎬 STEP 1 - Generate Start Frame (Simple Content Prompt):
+dramatic reveal of the massive chasm system high aerial view of plateau tops and chasm system --no text --ar 16:9 --q 2
+
+📋 V7 Style References Workflow:
+V7 WORKFLOW: 1) Generate start frame first with simple content description, 2) Then use Style References workflow for matching end frame. Avoid style words that conflict with references.
+
+🎨 STEP 2 - End Frame with Style References:
+End Frame:
+dramatic reveal of the massive chasm system deep inside chasm looking up at canyon walls with mist --no text --ar 16:9 --q 2
+
+💡 Remember: Upload your start frame + any previous clip as Style References!
+💡 Use --sw 200-400 to control style influence strength.

@@ -356,11 +356,11 @@ class StormlightControl:
     async def launch_tool(self, tool: str):
         """Launch a specific tool"""
         commands = {
-            'S': ['python', 'tools/styleframe_manager.py', 'interactive', 'new_scene', 'Scene description here'],
-            'V': ['python', 'tools/generate_veo3.py', '--help'],
-            'M': ['python', 'tools/pipeline_monitor.py', '--dashboard'],
+            'S': ['python3', 'tools/styleframe_manager.py', 'interactive', 'new_scene', 'Scene description here'],
+            'V': ['python3', 'tools/generate_veo3.py', '--help'],
+            'M': ['python3', 'tools/pipeline_monitor.py', '--dashboard'],
             'D': ['ls', '07_story_development/'],
-            'H': ['python', 'tools/pipeline_monitor.py', '--health-check']
+            'H': ['python3', 'tools/pipeline_monitor.py', '--health-check']
         }
         
         if tool in commands:
@@ -370,16 +370,24 @@ class StormlightControl:
             if tool == 'S':
                 console.print("\n[bold yellow]🎨✨ Styleframe Manager - Interactive Mode ✨🎨[/bold yellow]")
                 console.print("[dim]💡 Tip: Press Ctrl+C in the styleframe manager to return here![/dim]")
-                scene = Prompt.ask("🎭 Scene name (e.g., 'title_sequence')", default="new_scene")
-                description = Prompt.ask("📝 Scene description", default="Your scene description here")
-                try:
-                    subprocess.run(['python', 'tools/styleframe_manager.py', 'interactive', scene, description])
-                except KeyboardInterrupt:
-                    console.print("\n[green]✨ Returned to Control Center! ✨[/green]")
+                
+                # Offer auto-detection or manual input
+                if Confirm.ask("🔍 Auto-detect next clip from story development?", default=True):
+                    try:
+                        subprocess.run(['python3', 'tools/styleframe_manager.py', 'interactive'])
+                    except KeyboardInterrupt:
+                        console.print("\n[green]✨ Returned to Control Center! ✨[/green]")
+                else:
+                    scene = Prompt.ask("🎭 Scene name (e.g., 'title_sequence')", default="new_scene")
+                    description = Prompt.ask("📝 Scene description", default="Your scene description here")
+                    try:
+                        subprocess.run(['python3', 'tools/styleframe_manager.py', 'interactive', scene, description])
+                    except KeyboardInterrupt:
+                        console.print("\n[green]✨ Returned to Control Center! ✨[/green]")
             elif tool == 'V':
                 console.print("\n[yellow]Video Generation - Veo 3[/yellow]")
                 console.print("Usage examples:")
-                console.print("python tools/generate_veo3.py 'Your prompt here' --scene scene_name")
+                console.print("python3 tools/generate_veo3.py 'Your prompt here' --scene scene_name")
                 subprocess.run(commands[tool])
             elif tool == 'D':
                 console.print("\n[yellow]Story Development Files:[/yellow]")
