@@ -4,6 +4,9 @@
 google-cloud-storage>=2.10.0,<3.0.0
 google-cloud-aiplatform>=1.38.0,<2.0.0
 
+# Gemini API for Veo 3 Video Generation
+google-generativeai>=0.8.0,<1.0.0
+
 # Configuration Management
 pyyaml>=6.0,<7.0
 python-dotenv>=1.0.0,<2.0.0

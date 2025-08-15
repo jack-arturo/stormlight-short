@@ -9,7 +9,7 @@ An end-to-end AI-powered video generation pipeline for creating a 4-minute anima
 ./launch.sh
 ```
 
-## 📋 Project Status: WEB-FIRST WORKFLOW ACTIVE
+## 📋 Project Status: GEMINI API INTEGRATION READY
 
 ### ✅ Pre-Production Complete
 - **Story Development**: Full 4-minute pilot trailer structure with 29 clips
@@ -18,20 +18,20 @@ An end-to-end AI-powered video generation pipeline for creating a 4-minute anima
 - **Visual Style Guide**: Anime-inspired (Attack on Titan meets Studio Ghibli)
 - **Production Notes**: Complete with audio design and technical specifications
 
-### ✅ Web Workflow Implementation
-- **Vertex AI Media Studio**: Using web interface for Veo 3 generation
-- **Clean Organization**: Automated clip organization and metadata tracking
-- **Prompt Logging**: JSONL ledger system for reproducibility
-- **Quality Control**: 720p, 8-second clips with consistent naming
-- **API Preparation**: Ready for seamless transition when opt-in approved
+### ✅ Gemini API Integration
+- **Veo 3 Access**: Direct API access via `veo-3.0-generate-preview` model
+- **Programmatic Generation**: Generate videos directly from Cursor/terminal
+- **Automated Pipeline**: Full integration with existing asset organization
+- **Quality**: 720p, 8-second videos with native audio
+- **Cost Effective**: ~$0.10-0.30 per video, ~$3-9 for full trailer
 
-### 🎯 Current Phase: Video Generation via Web Interface
+### 🎯 Current Phase: Ready for Production
 Active workflow:
-1. **Generate clips** using Vertex AI Media Studio (veo-3.0-generate-preview)
-2. **Download and organize** using `tools/web_workflow_helper.py`
-3. **Track prompts** in `02_prompts/ledger.jsonl`
-4. **Prepare for assembly** in Flow
-5. **Maintain metadata** for API transition
+1. **Set up API key** following `GEMINI_API_SETUP.md`
+2. **Generate clips** using `tools/generate_veo3.py`
+3. **Automatic organization** into `04_flow_exports/`
+4. **Prompt tracking** in `02_prompts/ledger.jsonl`
+5. **Flow assembly** and final production
 
 ## 🏗️ Architecture
 
@@ -106,27 +106,32 @@ stormlight_short/
 
 ## 🎯 Key Commands
 
-### Web Workflow (Current)
+### Veo 3 Generation (Current)
 ```bash
-# Organize downloaded clip
-python3 tools/web_workflow_helper.py organize \
-  --source ~/Downloads/video.mp4 \
+# Generate a video clip
+python3 tools/generate_veo3.py \
+  "Epic fantasy title sequence: Sweeping aerial cinematography over alien world of Roshar..." \
   --scene title_sequence \
-  --prompt "Epic fantasy title sequence..." \
-  --notes "Good alien landscape"
+  --notes "First Stormlight video"
+
+# Generate with reference image
+python3 tools/generate_veo3.py \
+  "Your prompt here" \
+  --scene scene_name \
+  --image path/to/reference.jpg
 
 # Check generation status
 python3 tools/web_workflow_helper.py status
 
 # List all scenes
 python3 tools/web_workflow_helper.py scenes
-
-# View prompts for a scene
-python3 tools/web_workflow_helper.py prompts --scene-name title_sequence
 ```
 
-### Pipeline Management
+### Setup & Management
 ```bash
+# Set up Gemini API key (one-time)
+export GEMINI_API_KEY='your-api-key-here'
+
 # Interactive mode
 ./launch.sh
 
@@ -135,16 +140,6 @@ python3 tools/pipeline_monitor.py --dashboard
 
 # Sync to GCS
 python3 tools/sync_to_gcs.py.py --local . --bucket stormlight-short
-```
-
-### Future API Commands (When Opt-in Approved)
-```bash
-# Submit Vertex AI job
-python3 tools/vertex_manager.py \
-  --project-id stormlight-short \
-  --scene "opening_kaladin" \
-  --prompt "Kaladin on the Shattered Plains..." \
-  --duration 5
 ```
 
 ## 🎬 Story Structure: Stormlight: Into the Tempest
