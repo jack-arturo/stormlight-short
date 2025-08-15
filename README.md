@@ -81,5 +81,21 @@ python3 tools/web_workflow_helper.py status
 ## 📚 Documentation
 
 - **[COMMANDS.md](COMMANDS.md)** - Complete command reference with examples
+- **[MIDJOURNEY_WORKFLOW.md](MIDJOURNEY_WORKFLOW.md)** - Styleframe integration workflow
 - **[GEMINI_API_SETUP.md](GEMINI_API_SETUP.md)** - API setup and configuration
 - **[SECURITY.md](SECURITY.md)** - API key security best practices
+
+## 🎨 Styleframe Integration
+
+The pipeline now automatically uses Midjourney styleframes as reference images:
+
+```bash
+# 1. Generate clean Midjourney prompts
+python3 tools/styleframe_manager.py prompts kaladin_intro "Kaladin on cliff edge storm approaching"
+
+# 2. Create images in Midjourney, then organize them
+python3 tools/styleframe_manager.py organize image.png kaladin_intro start
+
+# 3. Generate video (automatically uses your styleframe!)
+python3 tools/generate_veo3.py "Video prompt" --scene kaladin_intro
+```

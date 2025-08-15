@@ -36,6 +36,7 @@ class Veo3Generator:
         self.flow_exports_dir = self.project_root / "04_flow_exports"
         self.prompts_dir = self.project_root / "02_prompts"
         self.ledger_file = self.prompts_dir / "ledger.jsonl"
+        self.styleframes_dir = self.project_root / "01_styleframes_midjourney"
         
         # Ensure directories exist
         self.flow_exports_dir.mkdir(exist_ok=True)
@@ -61,7 +62,8 @@ class Veo3Generator:
                       scene_name: str = "scene",
                       take_number: int = None,
                       reference_image: Optional[Path] = None,
-                      notes: str = "") -> Dict[str, Any]:
+                      notes: str = "",
+                      auto_discover_styleframes: bool = True) -> Dict[str, Any]:
         """
         Generate a video using Veo 3 via Gemini REST API
         
@@ -100,16 +102,30 @@ class Veo3Generator:
                 ]
             }
             
-            # Add reference image if provided
+            # Auto-discover reference image if not provided
+            if not reference_image and auto_discover_styleframes:
+                reference_image = self._find_best_reference_image(scene_name)
+            
+            # Add reference image if available
             if reference_image and reference_image.exists():
                 print(f"🖼️  Using reference image: {reference_image}")
                 # Read and encode the image
                 with open(reference_image, 'rb') as img_file:
                     img_data = base64.b64encode(img_file.read()).decode('utf-8')
                 
+                # Determine MIME type from file extension
+                mime_type = "image/jpeg"
+                if reference_image.suffix.lower() in ['.png']:
+                    mime_type = "image/png"
+                elif reference_image.suffix.lower() in ['.webp']:
+                    mime_type = "image/webp"
+                
                 payload["instances"][0]["image"] = {
-                    "bytesBase64Encoded": img_data
+                    "bytesBase64Encoded": img_data,
+                    "mimeType": mime_type
                 }
+            elif auto_discover_styleframes:
+                print(f"💡 No reference image found for scene '{scene_name}' - generating without reference")
             
             # Start the generation
             url = "https://generativelanguage.googleapis.com/v1beta/models/veo-3.0-generate-preview:predictLongRunning"
@@ -281,6 +297,37 @@ class Veo3Generator:
         
         return max(existing_takes, default=0) + 1
     
+    def _find_best_reference_image(self, scene_name: str) -> Optional[Path]:
+        """Find the best reference image for a scene from organized styleframes"""
+        # Check for organized styleframes first
+        metadata_file = self.styleframes_dir / "styleframes_metadata.json"
+        if metadata_file.exists():
+            try:
+                with open(metadata_file, 'r') as f:
+                    metadata = json.load(f)
+                
+                scene_data = metadata.get(scene_name, {})
+                
+                # Priority: start frames -> reference -> end frames
+                for frame_type in ["start", "reference", "end"]:
+                    if frame_type in scene_data and scene_data[frame_type]:
+                        # Get the most recent one
+                        latest = max(scene_data[frame_type], key=lambda x: x["timestamp"])
+                        ref_path = self.project_root / latest["path"]
+                        if ref_path.exists():
+                            return ref_path
+            except (json.JSONDecodeError, KeyError):
+                pass
+        
+        # Fallback: look for images in the old flat structure
+        for pattern in [f"{scene_name}*", f"*{scene_name}*"]:
+            matches = list(self.styleframes_dir.glob(pattern))
+            if matches:
+                # Return the most recently modified
+                return max(matches, key=lambda p: p.stat().st_mtime)
+        
+        return None
+    
     def _append_to_ledger(self, entry: Dict[str, Any]):
         """Append entry to the JSONL ledger file"""
         with open(self.ledger_file, 'a') as f:
@@ -305,9 +352,11 @@ Examples:
     parser.add_argument("--take", type=int, 
                        help="Take number (optional, auto-increments if not provided)")
     parser.add_argument("--image", type=Path, 
-                       help="Reference image path (optional)")
+                       help="Reference image path (optional, auto-discovers if not provided)")
     parser.add_argument("--notes", default="", 
                        help="Production notes (optional, use quotes)")
+    parser.add_argument("--no-auto-image", action="store_true",
+                       help="Disable automatic styleframe discovery")
     
     args = parser.parse_args()
     
@@ -320,7 +369,8 @@ Examples:
         scene_name=args.scene,
         take_number=args.take,
         reference_image=args.image,
-        notes=args.notes
+        notes=args.notes,
+        auto_discover_styleframes=not args.no_auto_image
     )
     
     if result["success"]:
