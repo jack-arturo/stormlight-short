@@ -1,2 +1,5 @@
 Users/jgarturo/Projects/OpenAI/mcp-servers/mcp-wp/logs/wordpress-api.log
 *.log
+
+# Archive directory for experimental code
+archive/

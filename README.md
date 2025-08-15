@@ -9,7 +9,7 @@ An end-to-end AI-powered video generation pipeline for creating a 4-minute anima
 ./launch.sh
 ```
 
-## 📋 Project Status: READY FOR ANIMATION
+## 📋 Project Status: WEB-FIRST WORKFLOW ACTIVE
 
 ### ✅ Pre-Production Complete
 - **Story Development**: Full 4-minute pilot trailer structure with 29 clips
@@ -18,24 +18,20 @@ An end-to-end AI-powered video generation pipeline for creating a 4-minute anima
 - **Visual Style Guide**: Anime-inspired (Attack on Titan meets Studio Ghibli)
 - **Production Notes**: Complete with audio design and technical specifications
 
-### ✅ Technical Infrastructure Ready
-- **Shell Configuration**: Fixed Google Cloud SDK paths
-- **Vertex AI Integration**: Complete Veo 3 API integration with cost tracking
-- **Prompt Template System**: YAML-based scene prompts with variations
-- **Asset Pipeline**: Automated Midjourney and Flow export processing
-- **Workflow Orchestration**: End-to-end scene-to-video automation
-- **Monitoring Dashboard**: Real-time pipeline monitoring with Rich UI
-- **Testing Framework**: Comprehensive test coverage
-- **Cost Management**: Per-job and cumulative cost tracking with warnings
-- **GCP Configuration**: Project ID configured (stormlight-short)
+### ✅ Web Workflow Implementation
+- **Vertex AI Media Studio**: Using web interface for Veo 3 generation
+- **Clean Organization**: Automated clip organization and metadata tracking
+- **Prompt Logging**: JSONL ledger system for reproducibility
+- **Quality Control**: 720p, 8-second clips with consistent naming
+- **API Preparation**: Ready for seamless transition when opt-in approved
 
-### 🎯 Next Phase: Animation Production
-Ready to begin generating:
-1. Midjourney style frames for each scene
-2. Vertex AI video clips using Veo 3
-3. Flow assembly and editing
-4. Audio integration
-5. Final cut production
+### 🎯 Current Phase: Video Generation via Web Interface
+Active workflow:
+1. **Generate clips** using Vertex AI Media Studio (veo-3.0-generate-preview)
+2. **Download and organize** using `tools/web_workflow_helper.py`
+3. **Track prompts** in `02_prompts/ledger.jsonl`
+4. **Prepare for assembly** in Flow
+5. **Maintain metadata** for API transition
 
 ## 🏗️ Architecture
 
@@ -110,31 +106,42 @@ stormlight_short/
 
 ## 🎯 Key Commands
 
-### Interactive Mode
+### Web Workflow (Current)
 ```bash
-./launch.sh  # Launch interactive menu
+# Organize downloaded clip
+python3 tools/web_workflow_helper.py organize \
+  --source ~/Downloads/video.mp4 \
+  --scene title_sequence \
+  --prompt "Epic fantasy title sequence..." \
+  --notes "Good alien landscape"
+
+# Check generation status
+python3 tools/web_workflow_helper.py status
+
+# List all scenes
+python3 tools/web_workflow_helper.py scenes
+
+# View prompts for a scene
+python3 tools/web_workflow_helper.py prompts --scene-name title_sequence
 ```
 
-### Direct Commands
+### Pipeline Management
 ```bash
+# Interactive mode
+./launch.sh
+
 # Monitor dashboard
 python3 tools/pipeline_monitor.py --dashboard
 
-# Validate configuration
-python3 tools/master_pipeline.py --validate
-
-# Test single scene
-python3 tools/master_pipeline.py --test-scene opening_kaladin
-
-# Run full pipeline
-python3 tools/master_pipeline.py --full-pipeline
-
 # Sync to GCS
 python3 tools/sync_to_gcs.py.py --local . --bucket stormlight-short
+```
 
+### Future API Commands (When Opt-in Approved)
+```bash
 # Submit Vertex AI job
 python3 tools/vertex_manager.py \
-  --project-id YOUR_PROJECT_ID \
+  --project-id stormlight-short \
   --scene "opening_kaladin" \
   --prompt "Kaladin on the Shattered Plains..." \
   --duration 5
