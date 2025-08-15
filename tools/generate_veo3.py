@@ -1,24 +1,19 @@
 #!/usr/bin/env python3
 """
-Gemini API Veo 3 Video Generation for Stormlight Archives
-Generates high-quality 720p, 8-second videos using veo-3.0-generate-preview
+WORKING Gemini API Veo 3 Video Generation for Stormlight Archives
+Uses the correct REST API format with instances array
 """
 
 import os
 import time
 import json
 import sys
+import requests
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, Dict, Any
 import argparse
-
-try:
-    import google.generativeai as genai
-except ImportError:
-    print("❌ Error: google-generativeai not installed")
-    print("Install with: pip install google-generativeai")
-    sys.exit(1)
+import base64
 
 class Veo3Generator:
     def __init__(self, project_root: Path = None):
@@ -31,33 +26,19 @@ class Veo3Generator:
         self.flow_exports_dir.mkdir(exist_ok=True)
         self.prompts_dir.mkdir(exist_ok=True)
         
-        # Configure Gemini API
-        self._setup_api()
-    
-    def _setup_api(self):
-        """Set up Gemini API authentication"""
-        # Try to get API key from environment
-        api_key = os.getenv('GEMINI_API_KEY')
-        if not api_key:
-            # Try to get from Google Cloud credentials
-            try:
-                from google.oauth2 import service_account
-                credentials_path = self.project_root / "config" / "stormlight-short-03170a60139e.json"
-                if credentials_path.exists():
-                    print("🔐 Using service account credentials for Gemini API")
-                    # Note: Gemini API requires API key, not service account
-                    print("⚠️  Warning: Gemini API requires GEMINI_API_KEY environment variable")
-                    print("   Get your API key from: https://aistudio.google.com/app/apikey")
-                    sys.exit(1)
-            except ImportError:
-                pass
-            
+        # Set up API
+        self.api_key = os.getenv('GEMINI_API_KEY')
+        if not self.api_key:
             print("❌ Error: GEMINI_API_KEY environment variable not set")
             print("Get your API key from: https://aistudio.google.com/app/apikey")
             print("Then set it with: export GEMINI_API_KEY='your-api-key-here'")
             sys.exit(1)
         
-        genai.configure(api_key=api_key)
+        self.headers = {
+            "Content-Type": "application/json",
+            "x-goog-api-key": self.api_key
+        }
+        
         print("✅ Gemini API configured successfully")
     
     def generate_video(self, 
@@ -67,7 +48,7 @@ class Veo3Generator:
                       reference_image: Optional[Path] = None,
                       notes: str = "") -> Dict[str, Any]:
         """
-        Generate a video using Veo 3 via Gemini API
+        Generate a video using Veo 3 via Gemini REST API
         
         Args:
             prompt: Text description for video generation
@@ -93,82 +74,51 @@ class Veo3Generator:
         output_path = self.flow_exports_dir / filename
         
         try:
-            # Prepare generation request
             print("🚀 Starting video generation...")
             
-            # Create the model
-            model = genai.GenerativeModel('veo-3.0-generate-preview')
+            # Prepare the payload
+            payload = {
+                "instances": [
+                    {
+                        "prompt": prompt
+                    }
+                ]
+            }
             
-            # Prepare input
-            inputs = [prompt]
+            # Add reference image if provided
             if reference_image and reference_image.exists():
                 print(f"🖼️  Using reference image: {reference_image}")
-                # Upload the image
-                image_file = genai.upload_file(reference_image)
-                inputs.insert(0, image_file)
+                # Read and encode the image
+                with open(reference_image, 'rb') as img_file:
+                    img_data = base64.b64encode(img_file.read()).decode('utf-8')
+                
+                payload["instances"][0]["image"] = {
+                    "bytesBase64Encoded": img_data
+                }
             
-            # Generate video
-            response = model.generate_content(
-                inputs,
-                generation_config=genai.GenerationConfig(
-                    temperature=0.7,
-                    max_output_tokens=1024,
-                )
-            )
+            # Start the generation
+            url = "https://generativelanguage.googleapis.com/v1beta/models/veo-3.0-generate-preview:predictLongRunning"
+            
+            print("⏳ Submitting generation request...")
+            response = requests.post(url, headers=self.headers, json=payload)
+            
+            if response.status_code != 200:
+                raise Exception(f"API request failed: {response.status_code} - {response.text}")
+            
+            result = response.json()
+            operation_name = result.get("name")
+            
+            if not operation_name:
+                raise Exception("No operation name returned from API")
+            
+            print(f"🔄 Operation started: {operation_name}")
             
             # Poll for completion
-            print("⏳ Waiting for video generation to complete...")
-            operation = response
+            video_data = self._poll_operation(operation_name)
             
-            # Note: The actual polling mechanism may vary based on Gemini API implementation
-            # This is a simplified version - you may need to adjust based on actual API
-            
-            max_wait_time = 300  # 5 minutes
-            wait_time = 0
-            poll_interval = 10
-            
-            while wait_time < max_wait_time:
-                try:
-                    # Check if generation is complete
-                    if hasattr(response, 'video') and response.video:
-                        print("✅ Video generation completed!")
-                        
-                        # Save the video
-                        with open(output_path, 'wb') as f:
-                            f.write(response.video.data)
-                        
-                        break
-                    elif hasattr(response, 'parts') and response.parts:
-                        # Check if any part contains video data
-                        for part in response.parts:
-                            if hasattr(part, 'inline_data') and part.inline_data.mime_type.startswith('video/'):
-                                print("✅ Video generation completed!")
-                                with open(output_path, 'wb') as f:
-                                    f.write(part.inline_data.data)
-                                break
-                        else:
-                            # No video found yet, continue waiting
-                            time.sleep(poll_interval)
-                            wait_time += poll_interval
-                            print(f"⏳ Still generating... ({wait_time}s elapsed)")
-                            continue
-                        break
-                    else:
-                        time.sleep(poll_interval)
-                        wait_time += poll_interval
-                        print(f"⏳ Still generating... ({wait_time}s elapsed)")
-                
-                except Exception as e:
-                    print(f"⚠️  Polling error: {e}")
-                    time.sleep(poll_interval)
-                    wait_time += poll_interval
-            
-            if wait_time >= max_wait_time:
-                raise TimeoutError("Video generation timed out after 5 minutes")
-            
-            # Verify file was created
-            if not output_path.exists():
-                raise FileNotFoundError("Generated video file not found")
+            # Save the video
+            with open(output_path, 'wb') as f:
+                f.write(video_data)
             
             file_size = output_path.stat().st_size
             print(f"💾 Video saved: {filename} ({file_size / 1024 / 1024:.1f} MB)")
@@ -186,7 +136,8 @@ class Veo3Generator:
                 "filename": filename,
                 "file_size_bytes": file_size,
                 "reference_image": str(reference_image) if reference_image else None,
-                "notes": notes
+                "notes": notes,
+                "operation_name": operation_name
             }
             
             # Append to ledger
@@ -209,6 +160,92 @@ class Veo3Generator:
                 "scene": scene_name,
                 "take_number": take_number
             }
+    
+    def _poll_operation(self, operation_name: str) -> bytes:
+        """Poll the long-running operation until completion"""
+        operation_url = f"https://generativelanguage.googleapis.com/v1beta/{operation_name}"
+        
+        max_wait_time = 600  # 10 minutes
+        wait_time = 0
+        poll_interval = 15  # Check every 15 seconds
+        
+        print("⏳ Polling for completion...")
+        
+        while wait_time < max_wait_time:
+            try:
+                response = requests.get(operation_url, headers=self.headers)
+                
+                if response.status_code != 200:
+                    raise Exception(f"Polling failed: {response.status_code} - {response.text}")
+                
+                operation_result = response.json()
+                
+                if operation_result.get("done", False):
+                    print("✅ Video generation completed!")
+                    
+                    # Extract the video data
+                    if "response" in operation_result:
+                        response_data = operation_result["response"]
+                        
+                        # Check for the new generateVideoResponse format
+                        if "generateVideoResponse" in response_data:
+                            video_response = response_data["generateVideoResponse"]
+                            if "generatedSamples" in video_response:
+                                samples = video_response["generatedSamples"]
+                                if samples and len(samples) > 0:
+                                    sample = samples[0]
+                                    if "video" in sample and "uri" in sample["video"]:
+                                        video_uri = sample["video"]["uri"]
+                                        print(f"📥 Downloading video from: {video_uri}")
+                                        return self._download_video(video_uri)
+                        
+                        # Fallback: Look for older prediction format
+                        elif "predictions" in response_data:
+                            predictions = response_data["predictions"]
+                            if predictions and len(predictions) > 0:
+                                prediction = predictions[0]
+                                
+                                # Look for base64 encoded video data
+                                if "bytesBase64Encoded" in prediction:
+                                    video_b64 = prediction["bytesBase64Encoded"]
+                                    return base64.b64decode(video_b64)
+                                elif "videoData" in prediction:
+                                    video_b64 = prediction["videoData"]
+                                    return base64.b64decode(video_b64)
+                    
+                    # If we get here, the operation completed but we couldn't find video data
+                    print(f"⚠️  Operation completed but no video data found")
+                    print(f"Response structure: {json.dumps(operation_result, indent=2)}")
+                    raise Exception("Video generation completed but no video data found in response")
+                
+                else:
+                    # Still processing
+                    time.sleep(poll_interval)
+                    wait_time += poll_interval
+                    print(f"⏳ Still generating... ({wait_time}s elapsed)")
+                
+            except Exception as e:
+                if "Video generation completed but no video data found" in str(e):
+                    raise  # Re-raise this specific error
+                print(f"⚠️  Polling error: {e}")
+                time.sleep(poll_interval)
+                wait_time += poll_interval
+        
+        raise TimeoutError("Video generation timed out after 10 minutes")
+    
+    def _download_video(self, video_uri: str) -> bytes:
+        """Download video from the provided URI"""
+        try:
+            # The URI should be downloadable with the same API key
+            response = requests.get(video_uri, headers=self.headers)
+            
+            if response.status_code != 200:
+                raise Exception(f"Video download failed: {response.status_code} - {response.text}")
+            
+            return response.content
+            
+        except Exception as e:
+            raise Exception(f"Failed to download video: {e}")
     
     def _get_next_take_number(self, scene_name: str) -> int:
         """Get the next take number for a scene"""
