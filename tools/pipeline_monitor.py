@@ -49,8 +49,8 @@ class PipelineMonitor:
                 return yaml.safe_load(f)
         return {}
     
-    async def get_vertex_job_status(self) -> Dict[str, Any]:
-        """Get status of all Vertex AI jobs"""
+    async def get_video_generation_status(self) -> Dict[str, Any]:
+        """Get status of all video generations (Gemini API + legacy Vertex AI)"""
         jobs_status = {
             "active": [],
             "completed": [],
@@ -58,36 +58,65 @@ class PipelineMonitor:
             "total_cost": 0.0
         }
         
-        if not self.vertex_jobs_dir.exists():
-            return jobs_status
+        # Check Gemini API generations from ledger
+        ledger_path = self.project_root / "02_prompts" / "ledger.jsonl"
+        if ledger_path.exists():
+            async with aiofiles.open(ledger_path, 'r') as f:
+                content = await f.read()
+                for line in content.strip().split('\n'):
+                    if line.strip():
+                        try:
+                            entry = json.loads(line)
+                            # Check if video file exists
+                            video_path = self.project_root / "04_flow_exports" / f"{entry['scene']}_take{entry['take']:02d}_{entry['timestamp']}.mp4"
+                            
+                            job_info = {
+                                "job_id": f"{entry['scene']}_take{entry['take']:02d}",
+                                "scene": entry['scene'],
+                                "timestamp": entry['timestamp'],
+                                "status": "completed" if video_path.exists() else "active",
+                                "cost": 0.15,  # Gemini API cost estimate per video
+                                "api": "gemini"
+                            }
+                            
+                            if job_info["status"] == "completed":
+                                jobs_status["completed"].append(job_info)
+                            else:
+                                jobs_status["active"].append(job_info)
+                            
+                            jobs_status["total_cost"] += job_info["cost"]
+                        except json.JSONDecodeError:
+                            continue
         
-        # Scan all job directories
-        for scene_dir in self.vertex_jobs_dir.iterdir():
-            if scene_dir.is_dir():
-                for job_dir in scene_dir.iterdir():
-                    if job_dir.is_dir():
-                        metadata_file = job_dir / "metadata" / "job_metadata.json"
-                        if metadata_file.exists():
-                            async with aiofiles.open(metadata_file, 'r') as f:
-                                content = await f.read()
-                                metadata = json.loads(content)
-                                
-                                job_info = {
-                                    "job_id": job_dir.name,
-                                    "scene": scene_dir.name,
-                                    "timestamp": metadata.get("timestamp"),
-                                    "status": self._determine_job_status(job_dir),
-                                    "cost": self._calculate_job_cost(metadata)
-                                }
-                                
-                                if job_info["status"] == "completed":
-                                    jobs_status["completed"].append(job_info)
-                                elif job_info["status"] == "failed":
-                                    jobs_status["failed"].append(job_info)
-                                else:
-                                    jobs_status["active"].append(job_info)
-                                
-                                jobs_status["total_cost"] += job_info["cost"]
+        # Legacy Vertex AI jobs (if any exist)
+        if self.vertex_jobs_dir.exists():
+            for scene_dir in self.vertex_jobs_dir.iterdir():
+                if scene_dir.is_dir():
+                    for job_dir in scene_dir.iterdir():
+                        if job_dir.is_dir():
+                            metadata_file = job_dir / "metadata" / "job_metadata.json"
+                            if metadata_file.exists():
+                                async with aiofiles.open(metadata_file, 'r') as f:
+                                    content = await f.read()
+                                    metadata = json.loads(content)
+                                    
+                                    job_info = {
+                                        "job_id": job_dir.name,
+                                        "scene": scene_dir.name,
+                                        "timestamp": metadata.get("timestamp"),
+                                        "status": self._determine_job_status(job_dir),
+                                        "cost": self._calculate_job_cost(metadata),
+                                        "api": "vertex"
+                                    }
+                                    
+                                    if job_info["status"] == "completed":
+                                        jobs_status["completed"].append(job_info)
+                                    elif job_info["status"] == "failed":
+                                        jobs_status["failed"].append(job_info)
+                                    else:
+                                        jobs_status["active"].append(job_info)
+                                    
+                                    jobs_status["total_cost"] += job_info["cost"]
         
         return jobs_status
     
@@ -124,13 +153,25 @@ class PipelineMonitor:
         """Count assets in each directory"""
         counts = {
             "styleframes": len(list((self.project_root / "01_styleframes_midjourney").glob("*.*"))),
-            "prompts": len(list((self.project_root / "02_prompts").glob("*.yaml"))),
-            "vertex_jobs": len(list(self.vertex_jobs_dir.glob("*/*"))),
-            "flow_exports": len(list((self.project_root / "04_flow_exports").glob("*/*.*"))),
+            "prompts": self._count_ledger_entries(),
+            "vertex_jobs": len(list(self.vertex_jobs_dir.glob("*/*"))) if self.vertex_jobs_dir.exists() else 0,
+            "flow_exports": len(list((self.project_root / "04_flow_exports").glob("*.mp4"))),
             "audio": len(list((self.project_root / "05_audio").glob("*.*"))),
             "final_cuts": len(list((self.project_root / "06_final_cut").glob("*.*")))
         }
         return counts
+    
+    def _count_ledger_entries(self) -> int:
+        """Count entries in the prompt ledger"""
+        ledger_path = self.project_root / "02_prompts" / "ledger.jsonl"
+        if not ledger_path.exists():
+            return 0
+        
+        try:
+            with open(ledger_path, 'r') as f:
+                return len([line for line in f if line.strip()])
+        except:
+            return 0
     
     async def get_sync_status(self) -> Dict[str, Any]:
         """Get GCS sync status from logs"""
@@ -187,23 +228,28 @@ class PipelineMonitor:
         )
         
         # Jobs table
-        jobs_table = Table(title="Vertex AI Jobs", show_header=True, header_style="bold cyan")
+        jobs_table = Table(title="Video Generation Jobs", show_header=True, header_style="bold cyan")
         jobs_table.add_column("Scene", style="yellow")
         jobs_table.add_column("Job ID", style="dim")
+        jobs_table.add_column("API", style="blue")
         jobs_table.add_column("Status", style="green")
         jobs_table.add_column("Cost", style="red")
         
         for job in jobs_status["active"]:
+            api_emoji = "🔮" if job.get("api") == "gemini" else "☁️"
             jobs_table.add_row(
                 job["scene"], 
-                job["job_id"][:8] + "...", 
+                job["job_id"][:12] + "..." if len(job["job_id"]) > 15 else job["job_id"], 
+                f"{api_emoji} {job.get('api', 'vertex').title()}",
                 "🔄 Active", 
                 f"${job['cost']:.2f}"
             )
         for job in jobs_status["completed"][-5:]:  # Last 5 completed
+            api_emoji = "🔮" if job.get("api") == "gemini" else "☁️"
             jobs_table.add_row(
                 job["scene"], 
-                job["job_id"][:8] + "...", 
+                job["job_id"][:12] + "..." if len(job["job_id"]) > 15 else job["job_id"],
+                f"{api_emoji} {job.get('api', 'vertex').title()}",
                 "✅ Complete", 
                 f"${job['cost']:.2f}"
             )
@@ -263,7 +309,7 @@ Total Cost: ${jobs_status['total_cost']:.2f}
             while True:
                 try:
                     # Gather all monitoring data
-                    jobs_status = await self.get_vertex_job_status()
+                    jobs_status = await self.get_video_generation_status()
                     asset_counts = await self.get_asset_counts()
                     sync_status = await self.get_sync_status()
                     
@@ -321,12 +367,27 @@ Total Cost: ${jobs_status['total_cost']:.2f}
         
         # Check Python dependencies
         try:
+            import google.generativeai as genai
+            health["checks"]["gemini_api"] = "✅ Gemini API available"
+        except ImportError:
+            health["checks"]["gemini_api"] = "❌ Missing google-generativeai"
+            health["status"] = "critical"
+        
+        # Check Gemini API key
+        import os
+        if os.getenv("GEMINI_API_KEY"):
+            health["checks"]["api_key"] = "✅ Gemini API key set"
+        else:
+            health["checks"]["api_key"] = "❌ GEMINI_API_KEY not set"
+            health["status"] = "warning" if health["status"] == "healthy" else health["status"]
+        
+        # Check legacy dependencies (optional)
+        try:
             import google.cloud.storage
             import google.cloud.aiplatform
-            health["checks"]["dependencies"] = "✅ All installed"
-        except ImportError as e:
-            health["checks"]["dependencies"] = f"❌ Missing: {e.name}"
-            health["status"] = "critical"
+            health["checks"]["legacy_gcp"] = "✅ Legacy GCP libs available"
+        except ImportError:
+            health["checks"]["legacy_gcp"] = "⚠️ Legacy GCP libs missing (optional)"
         
         # Check configuration
         if self.config_path.exists():
@@ -343,14 +404,16 @@ Total Cost: ${jobs_status['total_cost']:.2f}
     
     async def run_status_report(self):
         """Run one-time status report"""
-        jobs_status = await self.get_vertex_job_status()
+        jobs_status = await self.get_video_generation_status()
         asset_counts = await self.get_asset_counts()
         sync_status = await self.get_sync_status()
         
         console.print("\n📊 Pipeline Status Report\n", style="bold cyan")
-        console.print(f"Vertex AI Jobs: {len(jobs_status['active'])} active, {len(jobs_status['completed'])} completed")
+        console.print(f"Video Jobs: {len(jobs_status['active'])} active, {len(jobs_status['completed'])} completed")
         console.print(f"Total Cost: ${jobs_status['total_cost']:.2f}")
         console.print(f"Assets: {sum(asset_counts.values())} total files")
+        console.print(f"Generated Videos: {asset_counts['flow_exports']} MP4 files")
+        console.print(f"Prompt Entries: {asset_counts['prompts']} logged")
         console.print(f"Last Sync: {sync_status['last_sync']}")
 
 
