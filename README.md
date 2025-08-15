@@ -44,9 +44,9 @@ stormlight_short/
 ├── 04_flow_exports/             # Generated videos (MP4)
 ├── 07_story_development/        # Story docs & scene breakdowns
 └── tools/
-    ├── generate_veo3.py         # Video generation (Veo 3)
-    ├── styleframe_manager.py    # Midjourney workflow
-    └── pipeline_monitor.py      # Status & cost tracking
+    ├── generate_veo3.py         # 🎬 Video generation (Veo 3 via Gemini API)
+    ├── styleframe_manager.py    # 🎨 Midjourney workflow & prompt generation
+    └── pipeline_monitor.py      # 📊 Real-time monitoring & cost tracking
 ```
 
 ## 🎨 **Complete Workflow**

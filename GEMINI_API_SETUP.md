@@ -23,7 +23,7 @@ export GEMINI_API_KEY='your-api-key-here'
 python3 tools/generate_veo3.py "A windswept cliffside fortress at sunset, banners whipping in the storm, cinematic lighting" --scene test_fortress
 
 # Check status
-python3 tools/web_workflow_helper.py status
+python3 tools/pipeline_monitor.py
 ```
 
 ## 🎬 Generate Your First Stormlight Video
