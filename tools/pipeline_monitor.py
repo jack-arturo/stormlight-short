@@ -151,8 +151,18 @@ class PipelineMonitor:
     
     async def get_asset_counts(self) -> Dict[str, int]:
         """Count assets in each directory"""
+        styleframes_dir = self.project_root / "01_styleframes_midjourney"
+        
+        # Count organized styleframes
+        start_frames = len(list((styleframes_dir / "start_frames").glob("**/*.jpg"))) if (styleframes_dir / "start_frames").exists() else 0
+        end_frames = len(list((styleframes_dir / "end_frames").glob("**/*.jpg"))) if (styleframes_dir / "end_frames").exists() else 0
+        reference_frames = len(list((styleframes_dir / "reference").glob("**/*.jpg"))) if (styleframes_dir / "reference").exists() else 0
+        
         counts = {
-            "styleframes": len(list((self.project_root / "01_styleframes_midjourney").glob("*.*"))),
+            "start_frames": start_frames,
+            "end_frames": end_frames,
+            "reference_frames": reference_frames,
+            "total_styleframes": start_frames + end_frames + reference_frames,
             "prompts": self._count_ledger_entries(),
             "vertex_jobs": len(list(self.vertex_jobs_dir.glob("*/*"))) if self.vertex_jobs_dir.exists() else 0,
             "flow_exports": len(list((self.project_root / "04_flow_exports").glob("*.mp4"))),
@@ -388,6 +398,16 @@ Total Cost: ${jobs_status['total_cost']:.2f}
             health["checks"]["legacy_gcp"] = "✅ Legacy GCP libs available"
         except ImportError:
             health["checks"]["legacy_gcp"] = "⚠️ Legacy GCP libs missing (optional)"
+        
+        # Check styleframe manager
+        try:
+            styleframes_metadata = self.project_root / "01_styleframes_midjourney" / "styleframes_metadata.json"
+            if styleframes_metadata.exists():
+                health["checks"]["styleframes"] = "✅ Styleframe system active"
+            else:
+                health["checks"]["styleframes"] = "⚠️ No styleframes organized yet"
+        except:
+            health["checks"]["styleframes"] = "❌ Styleframe system error"
         
         # Check configuration
         if self.config_path.exists():

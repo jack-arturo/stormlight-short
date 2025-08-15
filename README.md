@@ -4,21 +4,27 @@
 ## 🚀 Quick Start
 
 ```bash
-# 1. Generate Midjourney styleframes
-python3 tools/styleframe_manager.py prompts kaladin_intro "Kaladin on cliff edge storm approaching"
+# Interactive workflow - complete styleframe creation
+python3 tools/styleframe_manager.py interactive title_sequence "Sweeping aerial shot across alien Roshar landscape"
 
-# 2. Create images in Midjourney, organize them
-python3 tools/styleframe_manager.py organize downloaded_image.png kaladin_intro start
-
-# 3. Generate video (automatically uses your styleframe!)
-python3 tools/generate_veo3.py "Kaladin stands defiantly as storm approaches" --scene kaladin_intro
+# Generate video (automatically uses your organized styleframes!)
+python3 tools/generate_veo3.py "Sweeping aerial shot across alien Roshar landscape with camera movement" --scene title_sequence
 ```
+
+### 🎯 **New Interactive Workflow**
+1. **Run interactive command** - Step-by-step guidance
+2. **Generate start frame** in Midjourney - Copy/paste clean prompts
+3. **Save to `tmp/tmp.png`** - Auto-optimizes to JPG (9MB→1MB)
+4. **Use Midjourney Editor** - Erase/Smart Erase for matching end frame
+5. **Auto-organization** - Files organized with metadata tracking
 
 ## ✅ **Production Ready**
 
-- **🎨 Midjourney Integration**: Automated prompt generation with Arcane-style references
+- **🎨 Interactive Styleframe Workflow**: Step-by-step Midjourney integration with Editor tools
+- **🖼️ Auto-Image Optimization**: PNG→JPG conversion, compression, resizing (9MB→1MB)
 - **🎬 Veo 3 Generation**: 720p, 8-second clips via Gemini API (~2-5 min generation)
-- **📁 Auto-Organization**: Styleframes → Videos → Metadata tracking
+- **📁 Smart Organization**: Automatic file management with metadata tracking
+- **🚫 Text-Free Prompts**: Clean generation avoiding Midjourney text artifacts
 - **🔒 Secure Setup**: Environment-based API key management
 - **📊 Pipeline Monitoring**: Real-time status tracking and cost monitoring
 
