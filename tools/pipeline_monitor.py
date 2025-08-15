@@ -67,8 +67,9 @@ class PipelineMonitor:
                     if line.strip():
                         try:
                             entry = json.loads(line)
-                            # Check if video file exists
-                            video_path = self.project_root / "04_flow_exports" / f"{entry['scene']}_take{entry['take']:02d}_{entry['timestamp']}.mp4"
+                            # Use the filename from the ledger entry
+                            video_filename = entry.get('filename', f"{entry['scene']}_take{entry['take']:02d}_{entry['timestamp']}.mp4")
+                            video_path = self.project_root / "04_flow_exports" / video_filename
                             
                             job_info = {
                                 "job_id": f"{entry['scene']}_take{entry['take']:02d}",
@@ -230,10 +231,14 @@ class PipelineMonitor:
         """Create rich dashboard layout"""
         layout = Layout()
         
-        # Header
+        # Header with exit instructions
+        header_text = Text()
+        header_text.append("🎬 Stormlight Short - Production Pipeline Monitor", style="bold magenta")
+        header_text.append("\n")
+        header_text.append("Press Ctrl+C to exit", style="dim italic")
+        
         header = Panel(
-            Text("🎬 Stormlight Short - Production Pipeline Monitor", 
-                 style="bold magenta", justify="center"),
+            header_text,
             style="cyan"
         )
         
@@ -292,10 +297,19 @@ Total Cost: ${jobs_status['total_cost']:.2f}
         """
         cost_panel = Panel(cost_text, title="Cost Summary", style="red")
         
+        # Footer with controls
+        footer_text = Text()
+        footer_text.append("🔄 Auto-refresh: 5s  ", style="dim")
+        footer_text.append("⌨️  Ctrl+C: Exit  ", style="dim")
+        footer_text.append("📊 Status: Live", style="green")
+        
+        footer = Panel(footer_text, style="dim")
+        
         # Layout assembly - create named layouts for proper rendering
         layout.split_column(
-            Layout(header, size=3, name="header"),
-            Layout(name="body")
+            Layout(header, size=4, name="header"),
+            Layout(name="body"),
+            Layout(footer, size=3, name="footer")
         )
         
         # Split the body into two columns
@@ -331,6 +345,7 @@ Total Cost: ${jobs_status['total_cost']:.2f}
                     await asyncio.sleep(self.refresh_interval)
                     
                 except KeyboardInterrupt:
+                    console.print("\n👋 [bold green]Pipeline Monitor stopped[/bold green] - Have a great day!")
                     break
                 except Exception as e:
                     console.print(f"[red]Error updating dashboard: {e}[/red]")
