@@ -1,0 +1,43 @@
+{
+  "scene_name": "bridge_run",
+  "description": "Bridge crew running across the chasm",
+  "style_descriptors": ["action", "desperate", "chaotic", "dangerous"],
+  "base_prompts": [
+    {
+      "id": "bridge_run_1",
+      "prompt": "Warriors carrying a massive bridge across a deep chasm, arrows flying, desperate action",
+      "style_modifiers": ["high energy", "dynamic camera", "war scene", "intense action"],
+      "technical_specs": {
+        "duration": 8,
+        "resolution": "1280x720",
+        "aspect_ratio": "16:9",
+        "camera_movement": "tracking shot following runners"
+      }
+    },
+    {
+      "id": "bridge_run_2",
+      "prompt": "Bridge Four running with wooden bridge, Parshendi archers, chaotic battle scene",
+      "style_modifiers": ["battlefield chaos", "multiple characters", "coordinated movement"],
+      "technical_specs": {
+        "duration": 6,
+        "resolution": "1280x720", 
+        "aspect_ratio": "16:9",
+        "camera_movement": "wide angle action shot"
+      }
+    }
+  ],
+  "negative_prompts": [
+    "static scene",
+    "peaceful",
+    "slow motion",
+    "modern weapons",
+    "vehicles"
+  ],
+  "seed_suggestions": [11111, 22222, 33333, 44444],
+  "vertex_ai_settings": {
+    "model": "veo-3-preview",
+    "temperature": 0.8,
+    "top_p": 0.85,
+    "guidance_scale": 8.0
+  }
+}

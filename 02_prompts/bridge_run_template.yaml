@@ -1,0 +1,51 @@
+# Bridge Run Scene - Prompt Template
+# Stormlight Archives Short Film
+
+scene_name: bridge_run
+description: "Bridge Four carrying their bridge across the chasms under arrow fire"
+
+base_prompts:
+  action_wide:
+    prompt: "Dynamic action shot of soldiers carrying massive wooden bridge on their shoulders, running across rocky terrain. Arrows raining down, dust and chaos, desperate sprint. Multiple warriors in formation, straining under weight. Cinematic action sequence, motion blur, high energy."
+    negative_prompt: "static, peaceful, modern warfare, guns"
+    seed: 101
+    duration: 6
+    camera_movement: "tracking shot following runners"
+    
+  bridge_detail:
+    prompt: "Close-up of wooden bridge being carried, hands gripping worn wood, sweat and strain visible. Heavy timber construction, rope bindings, battle damage. Documentary style detail shot, shallow depth of field."
+    negative_prompt: "metal, modern materials, clean, new"
+    seed: 202
+    duration: 3
+    camera_movement: "handheld, kinetic"
+    
+  arrow_impact:
+    prompt: "Arrows striking ground around running soldiers, dust explosions, near misses. Slow motion arrow trajectories, deadly projectiles in flight. War photography style, intense combat atmosphere."
+    negative_prompt: "bullets, explosions, modern weapons"
+    seed: 303
+    duration: 4
+    camera_movement: "whip pan following arrows"
+
+style_references:
+  - "Saving Private Ryan beach scene intensity"
+  - "Braveheart battle cinematography"
+  - "1917 continuous shot style"
+  - "Mad Max Fury Road kinetic energy"
+
+technical_settings:
+  resolution: "1920x1080"
+  aspect_ratio: "16:9"
+  frame_rate: 24
+  motion_blur: "heavy"
+  shutter_angle: 90  # for more staccato action
+  
+variations:
+  intensity: ["building tension", "full sprint", "under fire", "final push"]
+  perspective: ["with the runners", "from archers POV", "aerial view", "ground level"]
+  focus: ["Kaladin leading", "struggling bridgeman", "the bridge itself", "incoming arrows"]
+  
+production_notes:
+  - "Emphasize weight and struggle of carrying the bridge"
+  - "Dust and debris for atmosphere"
+  - "Quick cuts and handheld for urgency"
+  - "Sound design critical - heavy breathing, arrows, impacts"

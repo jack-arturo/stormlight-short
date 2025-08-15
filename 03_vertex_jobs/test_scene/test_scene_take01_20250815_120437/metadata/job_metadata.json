@@ -1,0 +1,37 @@
+{
+  "timestamp": "2025-08-15T12:04:37.255555",
+  "job_path": "03_vertex_jobs/test_scene/test_scene_take01_20250815_120437",
+  "request_payload": {
+    "instances": [
+      {
+        "prompt": "Test prompt for Veo 3",
+        "negative_prompt": "blurry, low quality, distorted, watermark",
+        "video_config": {
+          "duration_seconds": 5,
+          "width": 1280,
+          "height": 720,
+          "aspect_ratio": "16:9",
+          "fps": 24
+        },
+        "generation_config": {
+          "temperature": 0.7,
+          "guidance_scale": 7.5,
+          "seed": 590315380
+        }
+      }
+    ],
+    "parameters": {
+      "model": "veo-3-preview"
+    }
+  },
+  "scene_info": {
+    "scene_name": "test_scene",
+    "take_number": 1
+  },
+  "environment": {
+    "project_id": "test-project",
+    "location": "us-central1",
+    "python_version": "3.9.6 (default, Apr 30 2025, 02:07:17) \n[Clang 17.0.0 (clang-1700.0.13.5)]",
+    "user": "jgarturo"
+  }
+}

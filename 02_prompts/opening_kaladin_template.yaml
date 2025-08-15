@@ -1,0 +1,50 @@
+# Opening Kaladin Scene - Prompt Template
+# Stormlight Archives Short Film
+
+scene_name: opening_kaladin
+description: "Kaladin standing alone on the Shattered Plains, establishing shot"
+
+base_prompts:
+  hero_shot:
+    prompt: "Epic wide shot of a lone warrior standing on jagged rock formations, massive storm clouds gathering on the horizon, windswept cloak billowing dramatically. Dark-haired man with haunted eyes, holding a spear, silhouetted against stormy sky. Cinematic lighting, moody atmosphere, fantasy epic style."
+    negative_prompt: "cartoon, anime, low quality, blurry, oversaturated, modern elements"
+    seed: 42
+    duration: 5
+    camera_movement: "slow push in"
+    
+  atmospheric:
+    prompt: "The Shattered Plains at dusk, endless chasms and broken plateaus stretching to horizon, storm approaching from the east. Desolate wasteland of shattered rock, windswept and barren. Atmospheric perspective, volumetric lighting through storm clouds."
+    negative_prompt: "vegetation, water, buildings, people"
+    seed: 84
+    duration: 7
+    camera_movement: "wide establishing pan"
+    
+  emotional_close:
+    prompt: "Close-up of weathered warrior's face, eyes reflecting inner turmoil and determination. Wind-blown dark hair, subtle scars, thousand-yard stare. Storm light illuminating features, cinematic depth of field."
+    negative_prompt: "happy, smiling, clean, modern"
+    seed: 126
+    duration: 4
+    camera_movement: "static, subtle zoom"
+
+style_references:
+  - "Lord of the Rings cinematography"
+  - "Dune (2021) color grading"
+  - "Game of Thrones epic scale"
+  - "300 dramatic lighting"
+
+technical_settings:
+  resolution: "1920x1080"
+  aspect_ratio: "16:9"
+  frame_rate: 24
+  color_space: "cinematic"
+  
+variations:
+  time_of_day: ["dawn", "dusk", "storm approaching", "night with Stormlight"]
+  weather: ["clear", "windstorm", "highstorm approaching", "aftermath"]
+  emotional_tone: ["determined", "haunted", "defiant", "contemplative"]
+  
+production_notes:
+  - "Emphasize scale - Kaladin should appear small against the vastness"
+  - "Use practical storm effects references"
+  - "Color palette: desaturated browns/grays with storm blue accents"
+  - "Match Midjourney styleframe references in 01_styleframes_midjourney/"

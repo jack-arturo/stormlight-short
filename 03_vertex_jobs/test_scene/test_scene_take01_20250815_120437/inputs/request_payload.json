@@ -1,0 +1,23 @@
+{
+  "instances": [
+    {
+      "prompt": "Test prompt for Veo 3",
+      "negative_prompt": "blurry, low quality, distorted, watermark",
+      "video_config": {
+        "duration_seconds": 5,
+        "width": 1280,
+        "height": 720,
+        "aspect_ratio": "16:9",
+        "fps": 24
+      },
+      "generation_config": {
+        "temperature": 0.7,
+        "guidance_scale": 7.5,
+        "seed": 590315380
+      }
+    }
+  ],
+  "parameters": {
+    "model": "veo-3-preview"
+  }
+}

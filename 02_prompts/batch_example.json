@@ -1,0 +1,26 @@
+[
+  {
+    "scene_name": "kaladin_opening",
+    "prompt": "Kaladin Stormblessed standing alone on the Shattered Plains at sunset, dramatic windswept cloak, spear in hand, storm clouds gathering in distance, epic fantasy cinematography",
+    "negative_prompt": "blurry, low quality, cartoon style, modern clothing, bright colors",
+    "duration": 5,
+    "resolution": "1280x720",
+    "seed": 12345
+  },
+  {
+    "scene_name": "bridge_run", 
+    "prompt": "Bridge crews running across narrow stone bridge over chasm, arrows flying, dramatic action sequence, gritty fantasy warfare",
+    "negative_prompt": "blurry, low quality, cartoon style, modern weapons, bright cheerful mood",
+    "duration": 8,
+    "resolution": "1280x720",
+    "seed": 67890
+  },
+  {
+    "scene_name": "spren_encounter",
+    "prompt": "Glowing ethereal spirits dancing around warrior, magical fantasy creatures, otherworldly atmosphere, mystical lighting effects",
+    "negative_prompt": "blurry, low quality, cartoon style, modern setting, harsh lighting",
+    "duration": 6,
+    "resolution": "1280x720", 
+    "seed": 54321
+  }
+]

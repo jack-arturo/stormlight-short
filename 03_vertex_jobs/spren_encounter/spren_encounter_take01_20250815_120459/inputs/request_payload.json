@@ -1,0 +1,23 @@
+{
+  "instances": [
+    {
+      "prompt": "Glowing ethereal spirits dancing around warrior, magical fantasy creatures, otherworldly atmosphere, mystical lighting effects",
+      "negative_prompt": "blurry, low quality, cartoon style, modern setting, harsh lighting",
+      "video_config": {
+        "duration_seconds": 6,
+        "width": 1280,
+        "height": 720,
+        "aspect_ratio": "16:9",
+        "fps": 24
+      },
+      "generation_config": {
+        "temperature": 0.7,
+        "guidance_scale": 7.5,
+        "seed": 54321
+      }
+    }
+  ],
+  "parameters": {
+    "model": "veo-3-preview"
+  }
+}

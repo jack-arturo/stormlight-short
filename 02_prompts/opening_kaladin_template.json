@@ -1,0 +1,43 @@
+{
+  "scene_name": "opening_kaladin",
+  "description": "Opening sequence with Kaladin on the Shattered Plains",
+  "style_descriptors": ["windswept", "dramatic", "stormy", "desolate"],
+  "base_prompts": [
+    {
+      "id": "kaladin_plains_1",
+      "prompt": "A lone figure stands on a rocky plateau under stormy skies, windswept cloak, dramatic lighting",
+      "style_modifiers": ["cinematic", "epic scale", "moody atmosphere"],
+      "technical_specs": {
+        "duration": 5,
+        "resolution": "1280x720",
+        "aspect_ratio": "16:9",
+        "camera_movement": "slow pan"
+      }
+    },
+    {
+      "id": "kaladin_plains_2", 
+      "prompt": "Kaladin Stormblessed on the Shattered Plains, spear in hand, storm approaching",
+      "style_modifiers": ["dramatic lighting", "hero shot", "weathered warrior"],
+      "technical_specs": {
+        "duration": 5,
+        "resolution": "1280x720",
+        "aspect_ratio": "16:9",
+        "camera_movement": "static with wind effects"
+      }
+    }
+  ],
+  "negative_prompts": [
+    "blurry",
+    "low quality", 
+    "cartoon style",
+    "modern clothing",
+    "anachronistic elements"
+  ],
+  "seed_suggestions": [12345, 67890, 54321, 98765],
+  "vertex_ai_settings": {
+    "model": "veo-3-preview",
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "guidance_scale": 7.5
+  }
+}

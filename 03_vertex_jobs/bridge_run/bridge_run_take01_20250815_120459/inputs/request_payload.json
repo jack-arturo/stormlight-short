@@ -1,0 +1,23 @@
+{
+  "instances": [
+    {
+      "prompt": "Bridge crews running across narrow stone bridge over chasm, arrows flying, dramatic action sequence, gritty fantasy warfare",
+      "negative_prompt": "blurry, low quality, cartoon style, modern weapons, bright cheerful mood",
+      "video_config": {
+        "duration_seconds": 8,
+        "width": 1280,
+        "height": 720,
+        "aspect_ratio": "16:9",
+        "fps": 24
+      },
+      "generation_config": {
+        "temperature": 0.7,
+        "guidance_scale": 7.5,
+        "seed": 67890
+      }
+    }
+  ],
+  "parameters": {
+    "model": "veo-3-preview"
+  }
+}
