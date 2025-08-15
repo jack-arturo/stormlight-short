@@ -15,6 +15,21 @@ from typing import Optional, Dict, Any
 import argparse
 import base64
 
+# Load environment variables from .env file
+def load_env_file():
+    """Load environment variables from .env file if it exists"""
+    env_path = Path(__file__).parent.parent / ".env"
+    if env_path.exists():
+        with open(env_path, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, value = line.split('=', 1)
+                    os.environ[key.strip()] = value.strip()
+
+# Load .env file at module import
+load_env_file()
+
 class Veo3Generator:
     def __init__(self, project_root: Path = None):
         self.project_root = project_root or Path.cwd()

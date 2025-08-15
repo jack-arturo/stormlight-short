@@ -1,9 +1,18 @@
 Users/jgarturo/Projects/OpenAI/mcp-servers/mcp-wp/logs/wordpress-api.log
 *.log
 
+# Environment variables and secrets
+.env
+.env.local
+.env.production
+.env.staging
+*.key
+
 # Google Cloud Service Account credentials
 config/*.json
 *.json
 
 # Archive directory for experimental code
 archive/
+.DS_Store
+/04_flow_exports
