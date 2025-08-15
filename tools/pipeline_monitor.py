@@ -236,17 +236,23 @@ Total Cost: ${jobs_status['total_cost']:.2f}
         """
         cost_panel = Panel(cost_text, title="Cost Summary", style="red")
         
-        # Layout assembly
+        # Layout assembly - create named layouts for proper rendering
         layout.split_column(
-            Layout(header, size=3),
-            Layout().split_row(
-                Layout(jobs_table),
-                Layout().split_column(
-                    Layout(assets_table),
-                    Layout(sync_panel),
-                    Layout(cost_panel)
-                )
-            )
+            Layout(header, size=3, name="header"),
+            Layout(name="body")
+        )
+        
+        # Split the body into two columns
+        layout["body"].split_row(
+            Layout(jobs_table, name="jobs"),
+            Layout(name="sidebar")
+        )
+        
+        # Split the sidebar into three panels
+        layout["body"]["sidebar"].split_column(
+            Layout(assets_table, name="assets"),
+            Layout(sync_panel, name="sync"),
+            Layout(cost_panel, name="cost")
         )
         
         return layout

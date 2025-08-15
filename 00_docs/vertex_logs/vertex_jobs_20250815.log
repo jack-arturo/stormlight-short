@@ -1,0 +1,4 @@
+2025-08-15 14:19:25,189 - __main__ - INFO - Submitting Vertex AI job vertex_job_32ad3296 (cost: $0.22)
+2025-08-15 14:19:25,190 - __main__ - ERROR - Unexpected error submitting job: Argument for field google.cloud.aiplatform.v1.PredictRequest.instances is not iterable
+2025-08-15 14:28:19,585 - __main__ - INFO - Submitting Vertex AI job vertex_job_d89d2cd1 (cost: $0.19)
+2025-08-15 14:28:19,585 - __main__ - ERROR - Unexpected error submitting job: Argument for field google.cloud.aiplatform.v1.PredictRequest.instances is not iterable
