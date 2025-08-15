@@ -1,12 +1,12 @@
 Midjourney Prompts for title_sequence
 ==================================================
-Generated: 2025-08-15 19:00:01
+Generated: 2025-08-15 19:06:33
 
 🎬 STEP 1 - Generate Start Frame:
 Sweeping aerial shot across alien Roshar landscape with strange rock formations jutting from ground, no grass only crystalline plants and moss, alien beauty with stormy skies overhead empty sky with dramatic clouds, clear space for title overlay epic cinematic storm dramatic lighting Arcane style by Fortiche --no text --no typography --style raw --ar 16:9 --q 2
 
 📋 Next Steps:
-WEB UI WORKFLOW: 1) Generate start frame, 2) Upload start frame to Midjourney web UI, 3) Use 'Vary (Region)' or image+text prompt with the variation text above. Text will be added in post-production.
+EDITOR WORKFLOW: 1) Generate start frame, 2) Upload to Midjourney web UI, 3) Click 'Edit', 4) Use 'Erase/Smart Erase' on sky area, 5) Submit Edit with variation prompt. Text added in post-production.
 
 📝 Reference (for later steps):
 End Frame Variation:

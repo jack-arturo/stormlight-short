@@ -15,6 +15,11 @@ from rich.table import Table
 from rich.panel import Panel
 from rich.prompt import Prompt, Confirm
 import time
+try:
+    from PIL import Image
+    PIL_AVAILABLE = True
+except ImportError:
+    PIL_AVAILABLE = False
 
 console = Console()
 
@@ -72,14 +77,14 @@ class StyleframeManager:
         scene_dir = target_dir / scene_name
         scene_dir.mkdir(exist_ok=True)
         
-        # Generate filename with timestamp
+        # Generate filename with timestamp (always use .jpg for optimization)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        file_extension = image_path.suffix
-        new_filename = f"{scene_name}_{frame_type}_{timestamp}{file_extension}"
+        new_filename = f"{scene_name}_{frame_type}_{timestamp}.jpg"
         target_path = scene_dir / new_filename
         
-        # Copy the file
-        shutil.copy2(image_path, target_path)
+        # Optimize and copy the file
+        console.print(f"🔄 Processing {image_path.name}...")
+        optimized = self._optimize_image(image_path, target_path)
         
         # Update metadata
         metadata = self._load_metadata()
@@ -322,17 +327,24 @@ class StyleframeManager:
         
         # Step 3: Organize start frame
         console.print("\n[bold yellow]Step 3: Organize your start frame[/bold yellow]")
-        console.print("💡 Save your image to tmp/tmp.jpg for quick workflow (smaller file size)")
+        console.print("💡 Save your image to tmp/tmp.png (will auto-optimize to JPG)")
         
-        # Default to tmp/tmp.jpg, but allow override
-        default_path = "tmp/tmp.jpg"
-        if Path(default_path).exists():
-            if Confirm.ask(f"Use {default_path}?", default=True):
-                start_frame_path = Path(default_path)
+        # Check for both PNG and JPG in tmp
+        png_path = Path("tmp/tmp.png")
+        jpg_path = Path("tmp/tmp.jpg")
+        
+        if png_path.exists():
+            if Confirm.ask(f"Use {png_path} (will optimize)?", default=True):
+                start_frame_path = png_path
+            else:
+                start_frame_path = Path(Prompt.ask("Enter the path to your start frame image"))
+        elif jpg_path.exists():
+            if Confirm.ask(f"Use {jpg_path}?", default=True):
+                start_frame_path = jpg_path
             else:
                 start_frame_path = Path(Prompt.ask("Enter the path to your start frame image"))
         else:
-            console.print(f"❌ {default_path} not found")
+            console.print("❌ No tmp/tmp.png or tmp/tmp.jpg found")
             start_frame_path = Path(Prompt.ask("Enter the path to your start frame image"))
         
         if not start_frame_path.exists():
@@ -386,17 +398,24 @@ class StyleframeManager:
         
         # Step 5: Organize end frame
         console.print("\n[bold yellow]Step 5: Organize your end frame[/bold yellow]")
-        console.print("💡 Save your end frame to tmp/tmp.jpg and confirm")
+        console.print("💡 Save your end frame to tmp/tmp.png (will auto-optimize)")
         
-        # Default to tmp/tmp.jpg for end frame too
-        default_path = "tmp/tmp.jpg"
-        if Path(default_path).exists():
-            if Confirm.ask(f"Use {default_path} for end frame?", default=True):
-                end_frame_path = Path(default_path)
+        # Check for both PNG and JPG in tmp for end frame
+        png_path = Path("tmp/tmp.png")
+        jpg_path = Path("tmp/tmp.jpg")
+        
+        if png_path.exists():
+            if Confirm.ask(f"Use {png_path} for end frame (will optimize)?", default=True):
+                end_frame_path = png_path
+            else:
+                end_frame_path = Path(Prompt.ask("Enter the path to your end frame image"))
+        elif jpg_path.exists():
+            if Confirm.ask(f"Use {jpg_path} for end frame?", default=True):
+                end_frame_path = jpg_path
             else:
                 end_frame_path = Path(Prompt.ask("Enter the path to your end frame image"))
         else:
-            console.print(f"❌ {default_path} not found")
+            console.print("❌ No tmp/tmp.png or tmp/tmp.jpg found")
             end_frame_path = Path(Prompt.ask("Enter the path to your end frame image"))
         
         if not end_frame_path.exists():
@@ -429,6 +448,52 @@ class StyleframeManager:
         # Save prompts for reference
         self._save_prompts_to_files(scene_name, ref_prompts)
         console.print(f"💾 All prompts saved for future reference")
+
+    def _optimize_image(self, source_path: Path, target_path: Path) -> bool:
+        """
+        Optimize image: convert to JPG, resize if needed, compress
+        Returns True if optimization was applied, False if just copied
+        """
+        if not PIL_AVAILABLE:
+            # Fallback to simple copy if PIL not available
+            shutil.copy2(source_path, target_path)
+            return False
+        
+        try:
+            with Image.open(source_path) as img:
+                # Convert to RGB if needed (for JPG compatibility)
+                if img.mode in ('RGBA', 'LA', 'P'):
+                    # Create white background for transparency
+                    background = Image.new('RGB', img.size, (255, 255, 255))
+                    if img.mode == 'P':
+                        img = img.convert('RGBA')
+                    background.paste(img, mask=img.split()[-1] if img.mode in ('RGBA', 'LA') else None)
+                    img = background
+                elif img.mode != 'RGB':
+                    img = img.convert('RGB')
+                
+                # Resize if too large (keep aspect ratio)
+                max_dimension = 2048  # Good for Midjourney uploads
+                if max(img.size) > max_dimension:
+                    ratio = max_dimension / max(img.size)
+                    new_size = (int(img.size[0] * ratio), int(img.size[1] * ratio))
+                    img = img.resize(new_size, Image.Resampling.LANCZOS)
+                    console.print(f"📐 Resized to {new_size[0]}x{new_size[1]}")
+                
+                # Save as optimized JPG
+                img.save(target_path, 'JPEG', quality=90, optimize=True)
+                
+                # Show file size reduction
+                original_size = source_path.stat().st_size / (1024 * 1024)  # MB
+                new_size = target_path.stat().st_size / (1024 * 1024)  # MB
+                console.print(f"📦 Optimized: {original_size:.1f}MB → {new_size:.1f}MB")
+                return True
+                
+        except Exception as e:
+            console.print(f"⚠️  Optimization failed: {e}")
+            # Fallback to copy
+            shutil.copy2(source_path, target_path)
+            return False
 
 
 def main():
