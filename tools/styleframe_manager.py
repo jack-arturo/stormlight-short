@@ -209,10 +209,10 @@ class StyleframeManager:
         if start_frame_path:
             prompts["end_frame_variation"] = f"{variations['end']} {style_keywords} dramatic lighting {text_avoidance}"
             prompts["end_frame_full"] = f"{base_description} {variations['end']} {style_keywords} dramatic lighting Arcane style by Fortiche {text_avoidance} --style raw --ar 16:9 --q 2"
-            prompts["workflow_note"] = "WEB UI WORKFLOW: 1) Generate start frame, 2) Upload start frame to Midjourney web UI, 3) Use 'Vary (Region)' or image+text prompt with the variation text above. Text will be added in post-production."
+            prompts["workflow_note"] = "EDITOR WORKFLOW: 1) Generate start frame, 2) Upload to Midjourney web UI, 3) Click 'Edit', 4) Use 'Erase/Smart Erase' on sky area, 5) Submit Edit with variation prompt. Text added in post-production."
         else:
             prompts["end_frame"] = f"{base_description} {variations['end']} {style_keywords} dramatic lighting Arcane style by Fortiche {text_avoidance} --style raw --ar 16:9 --q 2"
-            prompts["workflow_note"] = "WORKFLOW: 1) Generate start frame first, 2) Use Midjourney web UI to upload start frame and create variation for end frame. Text will be added in post-production."
+            prompts["workflow_note"] = "WORKFLOW: 1) Generate start frame first, 2) Use Midjourney Editor to erase sky area and add title space. Text will be added in post-production."
         
         return prompts
     
@@ -322,16 +322,22 @@ class StyleframeManager:
         
         # Step 3: Organize start frame
         console.print("\n[bold yellow]Step 3: Organize your start frame[/bold yellow]")
-        while True:
-            start_frame_path = Prompt.ask("Enter the path to your start frame image")
-            start_frame_path = Path(start_frame_path)
-            
-            if start_frame_path.exists():
-                break
+        console.print("💡 Save your image to tmp/tmp.jpg for quick workflow (smaller file size)")
+        
+        # Default to tmp/tmp.jpg, but allow override
+        default_path = "tmp/tmp.jpg"
+        if Path(default_path).exists():
+            if Confirm.ask(f"Use {default_path}?", default=True):
+                start_frame_path = Path(default_path)
             else:
-                console.print(f"❌ File not found: {start_frame_path}")
-                if not Confirm.ask("Try again?"):
-                    return
+                start_frame_path = Path(Prompt.ask("Enter the path to your start frame image"))
+        else:
+            console.print(f"❌ {default_path} not found")
+            start_frame_path = Path(Prompt.ask("Enter the path to your start frame image"))
+        
+        if not start_frame_path.exists():
+            console.print(f"❌ File not found: {start_frame_path}")
+            return
         
         # Organize the start frame
         try:
@@ -354,24 +360,23 @@ class StyleframeManager:
         # Generate prompts with start frame reference
         ref_prompts = self.generate_midjourney_prompts(scene_name, base_description, str(entry['path']))
         
-        console.print("\n[bold cyan]Option A: Midjourney Web UI (Recommended)[/bold cyan]")
-        console.print("1. Go to Midjourney web UI")
-        console.print("2. Upload your start frame")
-        console.print("3. Use 'Vary (Region)' and select the sky area")
-        console.print("4. Use this prompt for the variation:")
+        console.print("\n[bold cyan]Midjourney Editor Workflow:[/bold cyan]")
+        console.print("1. Go to Midjourney web UI and upload your start frame")
+        console.print("2. Click 'Edit' to open the Editor")
+        console.print("3. Use 'Erase' or 'Smart Erase' tool to select the sky area where you want the title")
+        console.print("4. Click 'Submit Edit' and use this prompt:")
         
         if "end_frame_variation" in ref_prompts:
-            console.print("\n[bold green]🎨 Variation Prompt:[/bold green]")
+            console.print("\n[bold green]🎨 Editor Prompt:[/bold green]")
             console.print("=" * 60)
             console.print(ref_prompts["end_frame_variation"])
             console.print("=" * 60)
         
-        console.print("\n[bold cyan]Option B: Full Prompt[/bold cyan]")
-        if "end_frame_full" in ref_prompts:
-            console.print("\n[bold blue]🎨 Full End Frame Prompt:[/bold blue]")
-            console.print("=" * 80)
-            console.print(ref_prompts["end_frame_full"])
-            console.print("=" * 80)
+        console.print("\n[bold yellow]💡 Optional Tools:[/bold yellow]")
+        console.print("• Use 'Pan' to adjust framing if needed")
+        console.print("• Use 'Zoom Out' for wider composition")
+        console.print("• Use 'Crop' to fine-tune the aspect ratio")
+        console.print("• All tools can be combined with 'Remix' for variations")
         
         # Wait for end frame generation
         if not Confirm.ask("\nHave you generated your end frame?"):
@@ -381,16 +386,22 @@ class StyleframeManager:
         
         # Step 5: Organize end frame
         console.print("\n[bold yellow]Step 5: Organize your end frame[/bold yellow]")
-        while True:
-            end_frame_path = Prompt.ask("Enter the path to your end frame image")
-            end_frame_path = Path(end_frame_path)
-            
-            if end_frame_path.exists():
-                break
+        console.print("💡 Save your end frame to tmp/tmp.jpg and confirm")
+        
+        # Default to tmp/tmp.jpg for end frame too
+        default_path = "tmp/tmp.jpg"
+        if Path(default_path).exists():
+            if Confirm.ask(f"Use {default_path} for end frame?", default=True):
+                end_frame_path = Path(default_path)
             else:
-                console.print(f"❌ File not found: {end_frame_path}")
-                if not Confirm.ask("Try again?"):
-                    return
+                end_frame_path = Path(Prompt.ask("Enter the path to your end frame image"))
+        else:
+            console.print(f"❌ {default_path} not found")
+            end_frame_path = Path(Prompt.ask("Enter the path to your end frame image"))
+        
+        if not end_frame_path.exists():
+            console.print(f"❌ File not found: {end_frame_path}")
+            return
         
         # Organize the end frame
         try:
