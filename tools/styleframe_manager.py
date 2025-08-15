@@ -157,6 +157,30 @@ class StyleframeManager:
             "title": "epic cinematic storm"
         }
         
+        # Scene-specific start/end variations
+        scene_variations = {
+            "title_sequence": {
+                "start": "empty sky ready for title",
+                "end": "elegant title text STORMLIGHT INTO THE TEMPEST prominently displayed"
+            },
+            "kaladin_intro": {
+                "start": "close-up focus on face and expression",
+                "end": "wider shot showing full context and environment"
+            },
+            "adolin_intro": {
+                "start": "confident stance in training position",
+                "end": "mid-sword technique demonstration"
+            },
+            "dalinar_intro": {
+                "start": "studying maps with intense concentration",
+                "end": "looking up with commanding presence"
+            },
+            "shattered_plains": {
+                "start": "high aerial view showing plateau tops",
+                "end": "diving down into chasm depths with mist"
+            }
+        }
+        
         # Determine scene style
         style_keywords = "epic cinematic"  # default
         for keyword, style in scene_styles.items():
@@ -164,9 +188,15 @@ class StyleframeManager:
                 style_keywords = style
                 break
         
+        # Get scene-specific variations or use defaults
+        variations = scene_variations.get(scene_name, {
+            "start": "establishing shot",
+            "end": "closer detailed view"
+        })
+        
         prompts = {
-            "start_frame": f"{base_description} {style_keywords} dramatic lighting Arcane style by Fortiche --style raw --ar 16:9 --q 2",
-            "end_frame": f"{base_description} {style_keywords} dramatic lighting Arcane style by Fortiche --style raw --ar 16:9 --q 2"
+            "start_frame": f"{base_description} {variations['start']} {style_keywords} dramatic lighting Arcane style by Fortiche --style raw --ar 16:9 --q 2",
+            "end_frame": f"{base_description} {variations['end']} {style_keywords} dramatic lighting Arcane style by Fortiche --style raw --ar 16:9 --q 2"
         }
         
         return prompts
@@ -220,13 +250,14 @@ class StyleframeManager:
         prompts_dir = self.project_root / "02_prompts" / "midjourney"
         prompts_dir.mkdir(exist_ok=True)
         
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"{scene_name}_prompts_{timestamp}.txt"
+        # Use consistent filename without timestamp
+        filename = f"{scene_name}_prompts.txt"
         filepath = prompts_dir / filename
         
         with open(filepath, 'w') as f:
             f.write(f"Midjourney Prompts for {scene_name}\n")
-            f.write("=" * 50 + "\n\n")
+            f.write("=" * 50 + "\n")
+            f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
             
             for frame_type, prompt in prompts.items():
                 f.write(f"{frame_type.replace('_', ' ').title()}:\n")
