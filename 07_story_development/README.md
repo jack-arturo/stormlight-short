@@ -1,4 +1,4 @@
-# Story Development - The Way of Kings Animated Pilot
+# Story Development - Stormlight: Into the Tempest Animated Pilot
 
 This directory contains all story development materials for the 4-minute animated pilot trailer.
 
@@ -20,7 +20,7 @@ This directory contains all story development materials for the 4-minute animate
 
 ## 🎬 Project Overview
 
-**Format**: 4-minute animated pilot trailer for The Way of Kings TV series
+**Format**: 4-minute animated pilot trailer for Stormlight: Into the Tempest TV series
 **Technical Constraint**: 8-second maximum clips (30 total clips)
 **Target**: Generate interest in full TV series production
 **Style**: Anime-inspired animation (Attack on Titan/Demon Slayer aesthetic)

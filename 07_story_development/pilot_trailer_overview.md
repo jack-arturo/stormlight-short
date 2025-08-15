@@ -1,8 +1,8 @@
-# The Way of Kings - 4-Minute Animated Pilot Trailer
+# Stormlight: Into the Tempest - 4-Minute Animated Pilot Trailer
 
 ## 🎬 Executive Summary
 
-**Title**: "The Stormlight Archive: The Way of Kings"  
+**Title**: "Stormlight: Into the Tempest"  
 **Format**: 4-minute animated pilot trailer  
 **Purpose**: Generate interest and funding for full TV series production  
 **Technical Specs**: 30 clips × 8 seconds each (Google Flow/Gemini constraint)  

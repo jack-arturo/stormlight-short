@@ -12,7 +12,7 @@
 - Strange rock formations jutting from ground
 - No grass - only crystalline plants and moss
 - Alien beauty with stormy skies overhead
-- Title fades in elegantly: "THE STORMLIGHT ARCHIVE"
+- Title fades in elegantly: "STORMLIGHT: INTO THE TEMPEST"
 
 **Audio**: Mysterious, building orchestral theme  
 **Mood**: Wonder and otherworldliness  

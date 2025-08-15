@@ -138,7 +138,7 @@
 - "The Knights Radiant must stand again"
 - Montage of all three protagonists in their power
 - Hint of even greater threats coming
-- Logo: "THE STORMLIGHT ARCHIVE"
+- Logo: "STORMLIGHT: INTO THE TEMPEST"
 - "Coming Soon" with fade to black
 
 **Audio**: Triumphant theme resolving to mysterious undertone  

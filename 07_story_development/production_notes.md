@@ -1,4 +1,4 @@
-# Production Notes - The Way of Kings Animated Pilot Trailer
+# Production Notes - Stormlight: Into the Tempest Animated Pilot Trailer
 
 ## 🎨 Visual Style Guide
 

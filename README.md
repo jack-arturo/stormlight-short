@@ -1,6 +1,6 @@
-# 🎬 Stormlight Archives Short Film - AI Production Pipeline
+# 🎬 Stormlight: Into the Tempest - AI Production Pipeline
 
-An end-to-end AI-powered video generation pipeline for creating a Stormlight Archives short film using Google's Veo 3, Vertex AI, Midjourney, and Flow.
+An end-to-end AI-powered video generation pipeline for creating a 4-minute animated pilot trailer for the Stormlight Archives, using Google's Veo 3, Vertex AI, Midjourney, and Flow.
 
 ## 🚀 Quick Start
 
@@ -9,9 +9,16 @@ An end-to-end AI-powered video generation pipeline for creating a Stormlight Arc
 ./launch.sh
 ```
 
-## 📋 Project Status
+## 📋 Project Status: READY FOR ANIMATION
 
-### ✅ Completed Features
+### ✅ Pre-Production Complete
+- **Story Development**: Full 4-minute pilot trailer structure with 29 clips
+- **Character Arcs**: Kaladin (slave→Radiant), Adolin (prince→true knight), Dalinar (warlord→chosen)
+- **Dynamic Timing**: 3-8 second clips for natural pacing (total runtime 3:13)
+- **Visual Style Guide**: Anime-inspired (Attack on Titan meets Studio Ghibli)
+- **Production Notes**: Complete with audio design and technical specifications
+
+### ✅ Technical Infrastructure Ready
 - **Shell Configuration**: Fixed Google Cloud SDK paths
 - **Vertex AI Integration**: Complete Veo 3 API integration with cost tracking
 - **Prompt Template System**: YAML-based scene prompts with variations
@@ -20,11 +27,15 @@ An end-to-end AI-powered video generation pipeline for creating a Stormlight Arc
 - **Monitoring Dashboard**: Real-time pipeline monitoring with Rich UI
 - **Testing Framework**: Comprehensive test coverage
 - **Cost Management**: Per-job and cumulative cost tracking with warnings
+- **GCP Configuration**: Project ID configured (stormlight-short)
 
-### 🔧 Configuration Required
-1. Update `config/pipeline_config.yaml` with your GCP project ID
-2. Copy `.env.template` to `.env` and fill in your values
-3. Ensure GCP authentication: `gcloud auth application-default login`
+### 🎯 Next Phase: Animation Production
+Ready to begin generating:
+1. Midjourney style frames for each scene
+2. Vertex AI video clips using Veo 3
+3. Flow assembly and editing
+4. Audio integration
+5. Final cut production
 
 ## 🏗️ Architecture
 
@@ -70,6 +81,12 @@ stormlight_short/
 ├── 04_flow_exports/            # Flow editing exports
 ├── 05_audio/                   # Audio assets
 ├── 06_final_cut/              # Final rendered videos
+├── 07_story_development/       # Complete story structure
+│   ├── pilot_trailer_overview.md    # Master document
+│   ├── act1_world_introduction.md   # Act I details (9 clips)
+│   ├── act2_conflict_growth.md      # Act II details (10 clips)
+│   ├── act3_revelation_hook.md      # Act III details (10 clips)
+│   └── production_notes.md          # Visual/audio specifications
 ├── config/                     # Configuration files
 │   └── pipeline_config.yaml
 ├── tools/                      # Automation scripts
@@ -84,6 +101,7 @@ stormlight_short/
 │   └── sync_to_gcs.py.py      # GCS synchronization
 ├── launch.sh                   # Interactive launcher
 ├── requirements.txt            # Python dependencies
+├── .env                       # Environment variables (configured)
 ├── .env.template              # Environment variables template
 ├── CLAUDE.md                  # Claude Code instructions
 ├── SETUP.md                   # Setup guide
@@ -122,19 +140,35 @@ python3 tools/vertex_manager.py \
   --duration 5
 ```
 
-## 🎬 Scene Definitions
+## 🎬 Story Structure: Stormlight: Into the Tempest
 
-### Configured Scenes
-1. **opening_kaladin**: Kaladin on the Shattered Plains
-2. **bridge_run**: Bridge Four carrying bridge under fire
-3. **spren_encounter**: First meeting with Sylphrena
-4. **stormwall**: The approaching highstorm
+### Three-Act Pilot Trailer (3:13 runtime)
 
-Each scene includes:
-- Multiple prompt variations
-- Style references
-- Technical specifications
-- Production notes
+**Act I: World Introduction (60s, 9 clips)**
+- Title sequence with alien Roshar landscape
+- Character introductions: Kaladin, Adolin, Dalinar
+- Magic system reveal: Stormlight and spren
+- Highstorm approaching
+
+**Act II: Conflict & Growth (67s, 10 clips)**  
+- Bridge runs and deadly warfare
+- Kaladin's emerging leadership
+- Adolin's honor and dueling
+- Dalinar's visions and internal conflict
+- Sylphrena's appearance
+
+**Act III: Revelation & Hook (66s, 10 clips)**
+- Kaladin's first Surgebinding
+- Syl reveals her true nature
+- First Oath transformation
+- Knights Radiant rising
+- Series hook: "The Knights Radiant must stand again"
+
+### Visual Style
+- **Animation**: Attack on Titan meets Studio Ghibli
+- **Color Palette**: Stormy blues, warm golds, alien purples
+- **Dynamic Timing**: 3-8 second clips for natural pacing
+- **Magic Focus**: Surgebinding and spren bonds (no Shardblades)
 
 ## 💰 Cost Management
 
@@ -232,6 +266,6 @@ Private project for Stormlight Archives short film production.
 
 ---
 
-**Project Status**: Production Ready with Configuration Required
-**Last Updated**: August 2025
-**Version**: 1.0.0
+**Project Status**: ANIMATION READY - Story Development Complete
+**Last Updated**: December 2024
+**Version**: 2.0.0
