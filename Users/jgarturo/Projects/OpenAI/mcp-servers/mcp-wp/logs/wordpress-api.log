@@ -1,0 +1,9 @@
+[2025-08-15T09:30:57.522Z] Starting WordPress MCP server...
+[2025-08-15T09:30:57.525Z] Initializing WordPress client...
+[2025-08-15T09:30:57.525Z] Adding authentication headers
+[2025-08-15T09:30:57.525Z] Username: jgarturo
+[2025-08-15T09:30:57.525Z] App Password: g3pq WLe2 R0kB anfd cd6d RO2h
+[2025-08-15T09:30:58.296Z] Successfully connected to WordPress API
+[2025-08-15T09:30:58.296Z] WordPress client initialized successfully.
+[2025-08-15T09:30:58.297Z] Setting up server transport...
+[2025-08-15T09:30:58.297Z] WordPress MCP Server running on stdio

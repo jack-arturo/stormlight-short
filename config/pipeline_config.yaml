@@ -1,0 +1,91 @@
+gcp_project_id: "your-project-id"  # Update with your actual GCP project ID
+gcp_location: "us-central1"
+gcs_bucket: "stormlight-short"  # Update with your actual bucket name
+
+sync_settings:
+  auto_sync: true
+  dry_run_first: true
+  exclude_patterns:
+    - "*.tmp"
+    - "*.temp"
+    - "*.DS_Store"
+    - "Thumbs.db"
+    - "*.crdownload"
+    - ".git/*"
+    - "__pycache__/*"
+    - "*.pyc"
+
+# Scene definitions for the Stormlight Archives short film
+scenes:
+  opening_kaladin:
+    description: "Opening sequence with Kaladin on the Shattered Plains"
+    style_descriptors: ["windswept", "dramatic", "stormy", "desolate"]
+    default_prompts:
+      - "A lone figure stands on a rocky plateau under stormy skies, windswept cloak, dramatic lighting"
+      - "Kaladin Stormblessed on the Shattered Plains, spear in hand, storm approaching"
+    
+  bridge_run:
+    description: "Bridge crew running across the chasm"
+    style_descriptors: ["action", "desperate", "chaotic", "dangerous"]
+    default_prompts:
+      - "Warriors carrying a massive bridge across a deep chasm, arrows flying, desperate action"
+      - "Bridge Four running with wooden bridge, Parshendi archers, chaotic battle scene"
+    
+  spren_encounter:
+    description: "Kaladin's first encounter with Sylphrena"
+    style_descriptors: ["mystical", "ethereal", "glowing", "magical"]
+    default_prompts:
+      - "Glowing wind spren dancing around a dark-haired warrior, ethereal blue light"
+      - "Sylphrena as honorspren, ribbon of light, mystical encounter"
+    
+  stormwall:
+    description: "The approaching highstorm"
+    style_descriptors: ["massive", "overwhelming", "electric", "apocalyptic"]
+    default_prompts:
+      - "Massive wall of storm clouds approaching, lightning crackling, overwhelming scale"
+      - "Highstorm wall towering over landscape, electric blue energy, apocalyptic weather"
+
+# Vertex AI model configurations
+vertex_ai:
+  default_model: "veo-3-preview"
+  fallback_model: "veo-3-ga"
+  default_settings:
+    duration: 5
+    resolution: "1280x720"
+    aspect_ratio: "16:9"
+    temperature: 0.7
+    top_p: 0.9
+
+# Midjourney style frame requirements
+midjourney:
+  min_resolution:
+    width: 1280
+    height: 720
+  target_aspect_ratio: 1.777778  # 16:9
+  aspect_ratio_tolerance: 0.1
+  preferred_format: "PNG"
+
+# Flow integration settings
+flow:
+  export_formats: ["mp4", "mov", "avi"]
+  quality_presets:
+    - "high"
+    - "medium"
+    - "preview"
+
+# Automation schedules
+automation:
+  sync_interval_hours: 1
+  backup_retention_days: 30
+  log_retention_days: 90
+
+# Safety settings
+safety:
+  require_confirmation_for:
+    - "delete_operations"
+    - "overwrite_cloud_data"
+    - "vertex_ai_jobs"
+  auto_backup_before:
+    - "destructive_sync"
+    - "batch_operations"
+  cost_warning_threshold_usd: 10.0
