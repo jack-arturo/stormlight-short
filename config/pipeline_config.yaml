@@ -1,6 +1,6 @@
-gcp_project_id: "your-project-id"  # Update with your actual GCP project ID
+gcp_project_id: "stormlight-short"  # Your actual GCP project ID
 gcp_location: "us-central1"
-gcs_bucket: "stormlight-short"  # Update with your actual bucket name
+gcs_bucket: "stormlight-short"  # Your actual bucket name
 
 sync_settings:
   auto_sync: true
