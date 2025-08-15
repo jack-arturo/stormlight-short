@@ -1,5 +1,9 @@
 Users/jgarturo/Projects/OpenAI/mcp-servers/mcp-wp/logs/wordpress-api.log
 *.log
 
+# Google Cloud Service Account credentials
+config/*.json
+*.json
+
 # Archive directory for experimental code
 archive/
