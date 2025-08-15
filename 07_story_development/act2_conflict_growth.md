@@ -1,12 +1,13 @@
 # Act II: Conflict & Growth
-**Duration**: 1:20-2:40 (80 seconds, 10 clips)  
+**Duration**: 1:20-2:40 (80 seconds, 10 clips with dynamic timing)  
 **Purpose**: Show character struggles, escalate stakes, build toward transformation
 
 ---
 
 ## 🎬 Clip Breakdown
 
-### Clip 11: Bridge Run - Setup (80-88s)
+### Clip 10: Bridge Run - Setup (58-64s)
+**Length**: 6 seconds - *Building tension*
 **Visual**: The deadly reality of Kaladin's life
 - Multiple bridge crews lined up at chasm edge
 - Massive wooden bridges on their shoulders
@@ -19,7 +20,8 @@
 
 ---
 
-### Clip 12: Bridge Run - Action (88-96s)
+### Clip 11: Bridge Run - Action (64-72s)
+**Length**: 8 seconds - *Full action spectacle*
 **Visual**: Frantic, deadly action sequence
 - Bridge crews running across narrow bridge
 - Arrows flying, men falling into chasm
@@ -32,7 +34,8 @@
 
 ---
 
-### Clip 13: Kaladin's Leadership (96-104s)
+### Clip 12: Kaladin's Leadership (72-78s)
+**Length**: 6 seconds - *Character development*
 **Visual**: Hope beginning to emerge
 - Kaladin organizing Bridge Four in their barracks
 - Teaching them basic combat and survival
@@ -45,20 +48,22 @@
 
 ---
 
-### Clip 14: Shallan's Mission (104-112s)
-**Visual**: Scholarly intrigue and deception
-- Shallan approaching the formidable Jasnah Kholin
-- Attempting to study/steal her Soulcaster device
-- Nervous energy, clearly out of her depth
-- High-stakes social maneuvering
+### Clip 13: Adolin's Dueling (78-83s)
+**Length**: 5 seconds - *Quick combat showcase*
+**Visual**: Honorable combat in the dueling arena
+- Adolin facing multiple opponents with exceptional skill
+- Graceful, masterful swordwork with regular blade
+- Crowd cheering, displaying his popularity
+- Confident, almost playful combat style
 
-**Audio**: Tense, subtle orchestration  
-**Mood**: Intellectual danger and deception  
-**Key Elements**: Not all conflicts are physical
+**Audio**: Exciting, rhythmic combat music  
+**Mood**: Skill, honor, and showmanship  
+**Key Elements**: Martial excellence and noble bearing
 
 ---
 
-### Clip 15: Dalinar's Visions (112-120s)
+### Clip 14: Dalinar's Visions (83-91s)
+**Length**: 8 seconds - *Mystical revelation*
 **Visual**: Mystical experience during highstorm
 - Dalinar in trance-like state during storm
 - Ancient scenes playing out around him
@@ -71,7 +76,8 @@
 
 ---
 
-### Clip 16: The Thrill (120-128s)
+### Clip 15: The Thrill (91-97s)
+**Length**: 6 seconds - *Dark character moment*
 **Visual**: Dalinar's dark addiction
 - Dalinar in battle, eyes glowing red with bloodlust
 - Berserker rage, cutting through enemies
@@ -84,20 +90,22 @@
 
 ---
 
-### Clip 17: Shallan's First Truth (128-136s)
-**Visual**: Magical breakthrough moment
-- Shallan's hand glowing with Stormlight
-- Her first successful Soulcasting - bread transforming
-- Shock and wonder on her face
-- Power she never knew she had
+### Clip 16: Adolin's Honor Guard (97-104s)
+**Length**: 7 seconds - *Noble leadership*
+**Visual**: Adolin leading and protecting others
+- Adolin rallying troops or protecting civilians
+- Natural leadership and courage in action
+- Fighting alongside common soldiers
+- Embodying true nobility through service
 
-**Audio**: Crystalline, magical sound  
-**Mood**: Wonder and fear of new power  
-**Key Elements**: Hidden potential revealed
+**Audio**: Triumphant, inspiring theme  
+**Mood**: Leadership and noble sacrifice  
+**Key Elements**: True nobility through action, not birth
 
 ---
 
-### Clip 18: Kaladin's Despair (136-144s)
+### Clip 17: Kaladin's Despair (104-112s)
+**Length**: 8 seconds - *Emotional low point*
 **Visual**: The darkest moment
 - Kaladin hanging from chasm wall after failed escape
 - Contemplating suicide, utterly broken
@@ -110,7 +118,8 @@
 
 ---
 
-### Clip 19: Sylphrena Appears (144-152s)
+### Clip 18: Sylphrena Appears (112-117s)
+**Length**: 5 seconds - *Hope emerges*
 **Visual**: First glimpse of hope
 - Tiny wind spren dancing around despairing Kaladin
 - Ribbon of light, playful and curious
@@ -123,7 +132,8 @@
 
 ---
 
-### Clip 20: Rising Stakes (152-160s)
+### Clip 19: Rising Stakes (117-125s)
+**Length**: 8 seconds - *Epic scale reveal*
 **Visual**: War escalating beyond control
 - Massive chasmfiends emerging from depths
 - Gemhearts glowing in their chests
@@ -136,7 +146,7 @@
 
 ---
 
-## 🎯 Act II Objectives Achieved
+## 🎯 Act II Objectives Achieved (67 seconds, 10 clips)
 
 ✅ **Conflict Established**: Each character faces major challenges  
 ✅ **Growth Shown**: Characters beginning to change and develop  
@@ -144,10 +154,17 @@
 ✅ **Powers Emerging**: Hints of greater abilities in all three  
 ✅ **Despair and Hope**: Emotional journey from low to possibility
 
+## 🎬 Dynamic Timing Benefits
+
+**Emotional Pacing**: Longer clips for despair/hope moments, shorter for action
+**Natural Rhythm**: Varied lengths create professional trailer feel
+**Character Focus**: Key emotional beats get proper time to breathe
+**Action Flow**: Quick cuts for combat, extended for character development
+
 ## 🔗 Character Arcs at Act II End
 
 **Kaladin**: Broken slave → Emerging leader → Touched by spren  
-**Shallan**: Nervous scholar → Successful thief → Accidental Surgebinder  
+**Adolin**: Confident prince → Skilled duelist → Heroic protector  
 **Dalinar**: Conflicted warlord → Visionary → Chosen by higher power
 
 ## 🔗 Transition to Act III
@@ -159,3 +176,5 @@ Act II ends with the audience understanding:
 - Hope exists even in the darkest moments
 
 **Bridge to Act III**: Now that powers are emerging, what can these characters become?
+
+**Remaining Time**: 35 seconds to reach 2:40 mark for Act III start

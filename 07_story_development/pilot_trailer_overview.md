@@ -19,10 +19,10 @@
 ## 📖 Source Material Focus
 
 **Primary Book**: The Way of Kings (Stormlight Archive #1)  
-**Key Characters**: Kaladin, Shallan, Dalinar  
+**Key Characters**: Kaladin, Adolin, Dalinar  
 **Central Conflicts**: 
 - Kaladin's transformation from slave to Radiant
-- Shallan's scholarly mission and hidden powers  
+- Adolin's honor and martial excellence as a Shardbearer
 - Dalinar's visions and the coming Desolation
 - The return of the Knights Radiant
 
@@ -76,8 +76,8 @@
 **Kaladin**: Slave → Leader → Proto-Radiant  
 *Visual Journey*: Broken bridgeman → organizing Bridge Four → glowing with Stormlight
 
-**Shallan**: Scholar → Thief → Surgebinder  
-*Visual Journey*: Nervous student → attempted theft → hand glowing with power
+**Adolin**: Prince → Duelist → True Knight  
+*Visual Journey*: Confident warrior → skilled duelist → heroic protector
 
 **Dalinar**: Warlord → Visionary → Uniter  
 *Visual Journey*: Battle-drunk warrior → mystical visions → noble leader

@@ -52,7 +52,7 @@
 
 ### Sound Effects
 - **Stormlight**: Electrical hum with crystalline resonance
-- **Shardblades**: Sharp, singing metal with harmonic overtones
+- **Surgebinding**: Whooshing wind and energy crackling
 - **Spren**: Delicate chimes and whispers
 - **Chasmfiends**: Deep, resonant roars with chitinous clicking
 
@@ -67,11 +67,13 @@
 **2:00-2:40**: Peak intensity, rapid cuts  
 **2:40-4:00**: Triumphant crescendo to satisfying conclusion
 
-### Cut Timing
-- **Slow Moments**: 6-8 seconds per cut for emotional beats
-- **Action Sequences**: 2-4 seconds per cut for intensity
-- **Magic Reveals**: Hold for full 8 seconds to show spectacle
-- **Transitions**: Match cuts and visual bridges between clips
+### Dynamic Cut Timing
+- **Emotional Beats**: 6-8 seconds for character moments and revelations
+- **Action Sequences**: 3-5 seconds for intensity and momentum
+- **Quick Cuts**: 2-3 seconds for rapid montage sequences
+- **Magic Reveals**: 7-8 seconds to show full spectacle
+- **Transitions**: 4-6 seconds for world-building and setup
+- **Climactic Moments**: 8 seconds for maximum impact
 
 ### Emotional Beats
 1. **Wonder** (0:00-0:40): Establish alien beauty
@@ -92,9 +94,9 @@
 
 ### Clip Constraints
 - **Maximum Length**: 8 seconds per clip (Google Flow limitation)
-- **Minimum Length**: 6 seconds for proper pacing
+- **Dynamic Length**: 3-8 seconds based on emotional impact
 - **Transition Buffer**: 0.5 seconds overlap for smooth cuts
-- **Total Clips**: 30 clips exactly
+- **Total Clips**: 25-35 clips (flexible for natural pacing)
 
 ### File Organization
 ```
@@ -149,8 +151,8 @@
 ### Magic Effects
 - **Stormlight**: Luminous smoke rising from skin
 - **Surgebinding**: Gravity-defying movement, impossible physics
-- **Soulcasting**: Matter transformation with light effects
-- **Shardblades**: Glowing weapons that cut through anything
+- **Spren Bonds**: Glowing connections between human and spren
+- **Wind Effects**: Swirling air currents around Windrunners
 
 ---
 

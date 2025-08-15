@@ -1,12 +1,13 @@
 # Act III: Revelation & Hook
-**Duration**: 2:40-4:00 (80 seconds, 10 clips)  
+**Duration**: 2:40-4:00 (80 seconds, 10 clips with dynamic timing)  
 **Purpose**: Reveal true potential, deliver epic moments, hook for full series
 
 ---
 
 ## 🎬 Clip Breakdown
 
-### Clip 21: Kaladin's First Surge (160-168s)
+### Clip 20: Kaladin's First Surge (125-131s)
+**Length**: 6 seconds - *Power awakening*
 **Visual**: Unconscious magic in action
 - Kaladin during bridge run, unknowingly using Adhesion
 - Sticking to walls and surfaces impossibly
@@ -19,7 +20,8 @@
 
 ---
 
-### Clip 22: Syl's True Form (168-176s)
+### Clip 21: Syl's True Form (131-138s)
+**Length**: 7 seconds - *Magical revelation*
 **Visual**: Spren revelation
 - Sylphrena transforming from simple wind spren
 - Becoming honorspren - glowing blue-white entity
@@ -32,7 +34,8 @@
 
 ---
 
-### Clip 23: The Assassin in White (176-184s)
+### Clip 22: The Assassin in White (138-143s)
+**Length**: 5 seconds - *Quick power demonstration*
 **Visual**: Szeth's impossible combat
 - Szeth-son-son-Vallano in pristine white
 - Lashing himself through the air, defying gravity
@@ -45,20 +48,22 @@
 
 ---
 
-### Clip 24: Kaladin's First Oath (184-192s)
+### Clip 23: Kaladin's First Oath (143-151s)
+**Length**: 8 seconds - *Hero's transformation*
 **Visual**: The moment of transformation
 - "I will protect those who cannot protect themselves"
 - Stormlight blazing around Kaladin like armor
-- Syl transforming into a Shardblade in his hand
-- Eyes glowing with inner light
+- Syl glowing brilliantly beside him as honorspren
+- Eyes glowing with inner light, wind swirling around him
 
 **Audio**: Triumphant, soaring orchestral theme  
 **Mood**: Heroic transformation and power  
-**Key Elements**: Hero's true nature revealed
+**Key Elements**: Hero's true nature revealed through bond, not weapon
 
 ---
 
-### Clip 25: Dalinar's Vision Climax (192-200s)
+### Clip 24: Dalinar's Vision Climax (151-159s)
+**Length**: 8 seconds - *Divine revelation*
 **Visual**: Divine communication
 - The Almighty speaking directly to Dalinar
 - "Unite them. The Everstorm comes."
@@ -71,20 +76,22 @@
 
 ---
 
-### Clip 26: Shallan's Pattern (200-208s)
-**Visual**: Cryptic spren manifestation
-- Complex geometric patterns shifting around Shallan
-- Pattern revealing itself as her spren
-- Mathematical beauty and alien intelligence
-- "Lies. Truth. I want to understand."
+### Clip 25: Adolin's Honor (159-164s)
+**Length**: 5 seconds - *Noble heroism*
+**Visual**: Moment of pure heroism
+- Adolin protecting civilians or weaker soldiers
+- Standing against overwhelming odds with courage alone
+- Noble sacrifice or heroic stand
+- Embodying the ideals of knighthood through character
 
-**Audio**: Complex, mathematical harmonies  
-**Mood**: Intellectual wonder and mystery  
-**Key Elements**: Different type of magical bond
+**Audio**: Noble, inspiring orchestral theme  
+**Mood**: Honor, sacrifice, and heroism  
+**Key Elements**: True nobility through character, not magical items
 
 ---
 
-### Clip 27: The Everstorm (208-216s)
+### Clip 26: The Everstorm (164-172s)
+**Length**: 8 seconds - *Apocalyptic threat*
 **Visual**: Ancient evil awakening
 - Storm moving in wrong direction (east to west)
 - Red lightning crackling ominously
@@ -97,7 +104,8 @@
 
 ---
 
-### Clip 28: Knights Radiant Rising (216-224s)
+### Clip 27: Knights Radiant Rising (172-178s)
+**Length**: 6 seconds - *Legends return*
 **Visual**: The return of legends
 - Multiple figures glowing with different Stormlight colors
 - Different Orders showing different powers
@@ -110,20 +118,22 @@
 
 ---
 
-### Clip 29: Epic Battle Montage (224-232s)
+### Clip 28: Epic Battle Montage (178-183s)
+**Length**: 5 seconds - *Rapid action*
 **Visual**: Peak action sequence
-- Shardbearer combat with massive weapons
 - Surgebinding in full display - gravity, adhesion, transformation
+- Kaladin flying through the air with Stormlight
 - Chasmfiend hunt with gemheart prize
 - Armies clashing on massive scale
 
 **Audio**: Full battle symphony  
 **Mood**: Epic scope and power  
-**Key Elements**: Visual spectacle and scale
+**Key Elements**: Visual spectacle focused on Surgebinding
 
 ---
 
-### Clip 30: Final Hook (232-240s)
+### Clip 29: Final Hook (183-191s)
+**Length**: 8 seconds - *Series promise*
 **Visual**: Series setup and promise
 - "The Knights Radiant must stand again"
 - Montage of all three protagonists in their power
@@ -137,7 +147,7 @@
 
 ---
 
-## 🎯 Act III Objectives Achieved
+## 🎯 Act III Objectives Achieved (66 seconds, 10 clips)
 
 ✅ **Powers Revealed**: All three protagonists show true potential  
 ✅ **Stakes Established**: World-ending threats and ancient prophecies  
@@ -145,10 +155,17 @@
 ✅ **Epic Delivered**: Visual spectacle and emotional payoff  
 ✅ **Hook Set**: Audience desperate for full series
 
+## 🎬 Dynamic Timing Benefits
+
+**Climactic Pacing**: 8-second clips for major reveals (Oath, Vision, Everstorm)
+**Quick Action**: 5-second clips for rapid montage sequences
+**Emotional Beats**: 6-7 seconds for character transformation moments
+**Perfect Finale**: 8 seconds for series hook and promise
+
 ## 🔗 Character Arcs Completed
 
 **Kaladin**: Slave → Leader → Knight Radiant (Windrunner)  
-**Shallan**: Scholar → Thief → Knight Radiant (Lightweaver)  
+**Adolin**: Prince → Duelist → True Knight (Honor embodied)  
 **Dalinar**: Warlord → Visionary → Chosen of Honor
 
 ## 🎬 Trailer Arc Complete
@@ -168,3 +185,5 @@ The trailer promises viewers:
 - Visual spectacle worthy of the source material
 
 **Call to Action**: "The Knights Radiant must stand again" - and so must this series be made!
+
+**Final Runtime**: 3:11 (191 seconds) - **49 seconds under 4:00 for flexibility**
