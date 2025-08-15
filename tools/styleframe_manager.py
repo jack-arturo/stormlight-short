@@ -21,6 +21,13 @@ try:
 except ImportError:
     PIL_AVAILABLE = False
 
+try:
+    from prompt_enhancer import PromptEnhancer
+    LLM_AVAILABLE = True
+except ImportError:
+    LLM_AVAILABLE = False
+    print("⚠️  LLM enhancement not available. Install with: pip install openai")
+
 console = Console()
 
 class StyleframeManager:
@@ -45,6 +52,12 @@ class StyleframeManager:
         
         # Project-agnostic story development detection
         self.story_dev_dir = self.project_root / "07_story_development"
+        
+        # Initialize prompt enhancer if available
+        if LLM_AVAILABLE:
+            self.prompt_enhancer = PromptEnhancer(project_root=self.project_root)
+        else:
+            self.prompt_enhancer = None
     
     def organize_styleframe(self, 
                            image_path: Path, 
@@ -142,7 +155,9 @@ class StyleframeManager:
         metadata = self._load_metadata()
         return metadata
     
-    def generate_midjourney_prompts(self, scene_name: str, base_description: str, start_frame_path: str = None) -> Dict[str, str]:
+    def generate_midjourney_prompts(self, scene_name: str, base_description: str, 
+                                   start_frame_path: str = None, use_llm: bool = False,
+                                   num_variations: int = 3) -> Dict[str, str]:
         """
         Generate clean Midjourney prompts optimized for --style raw
         
@@ -150,8 +165,69 @@ class StyleframeManager:
             scene_name: Scene identifier
             base_description: Base scene description
             start_frame_path: Path to start frame for style reference (optional)
+            use_llm: Whether to use LLM enhancement
+            num_variations: Number of variations to generate (when using LLM)
         """
-        return self._generate_raw_prompts(scene_name, base_description, start_frame_path)
+        # Use LLM enhancement if requested and available
+        if use_llm and self.prompt_enhancer:
+            console.print("🤖 Using LLM enhancement for prompts...", style="cyan")
+            
+            # Generate enhanced prompts for start frame
+            start_enhanced = self.prompt_enhancer.enhance_midjourney_prompt(
+                base_description,
+                scene_name,
+                frame_type="start",
+                use_llm=True,
+                style_reference=False
+            )
+            
+            # Generate enhanced prompts for end frame (with style references)
+            end_enhanced = self.prompt_enhancer.enhance_midjourney_prompt(
+                base_description,
+                scene_name,
+                frame_type="end",
+                use_llm=True,
+                style_reference=True if start_frame_path else False
+            )
+            
+            # Generate variations if requested
+            if num_variations > 1:
+                variations = self.prompt_enhancer.generate_scene_variations(
+                    scene_name,
+                    num_variations=num_variations,
+                    variation_type="mood"
+                )
+                
+                # Add variations to the result
+                prompts = {
+                    "start_frame": start_enhanced.get("detailed", base_description),
+                    "end_frame_simple": end_enhanced.get("simple", base_description),
+                    "end_frame_detailed": end_enhanced.get("detailed", base_description),
+                    "workflow_note": end_enhanced.get("note", "Use V7 Style References"),
+                    "variations": []
+                }
+                
+                for var in variations:
+                    prompts["variations"].append(var["midjourney"]["detailed"])
+                
+                # Display cost if available
+                if self.prompt_enhancer.llm:
+                    stats = self.prompt_enhancer.llm.get_usage_stats()
+                    console.print(f"💰 LLM cost: ${stats['total_cost']:.4f}", style="dim")
+            else:
+                prompts = {
+                    "start_frame": start_enhanced.get("detailed", base_description),
+                    "end_frame_simple": end_enhanced.get("simple", base_description),
+                    "end_frame_detailed": end_enhanced.get("detailed", base_description),
+                    "workflow_note": end_enhanced.get("note", "Use V7 Style References")
+                }
+            
+            return prompts
+        else:
+            # Fall back to manual generation
+            if use_llm and not self.prompt_enhancer:
+                console.print("⚠️  LLM enhancement requested but not available, using manual generation", style="yellow")
+            return self._generate_raw_prompts(scene_name, base_description, start_frame_path)
     
 
     
@@ -253,6 +329,62 @@ class StyleframeManager:
         with open(self.metadata_file, 'w') as f:
             json.dump(metadata, f, indent=2)
     
+    def _save_prompts_to_story_markdown(self, scene_name: str, prompts: Dict) -> None:
+        """Save enhanced prompts to story development markdown files"""
+        if not self.story_dev_dir.exists():
+            return
+        
+        # Create an enhanced prompts file in story development
+        enhanced_file = self.story_dev_dir / f"enhanced_prompts_{scene_name}.md"
+        
+        with open(enhanced_file, 'w') as f:
+            f.write(f"# Enhanced Prompts for {scene_name}\n\n")
+            f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            
+            if "variations" in prompts and prompts["variations"]:
+                f.write("🤖 **AI-Enhanced with GPT-4-mini**\n\n")
+            
+            f.write("## Midjourney Prompts\n\n")
+            
+            # Start frame
+            if "start_frame" in prompts:
+                f.write("### Start Frame\n")
+                f.write("```\n")
+                f.write(prompts['start_frame'])
+                f.write("\n```\n\n")
+            
+            # Variations
+            if "variations" in prompts and prompts["variations"]:
+                f.write("### Variations\n\n")
+                for i, variation in enumerate(prompts["variations"], 1):
+                    f.write(f"**Variation {i}:**\n")
+                    f.write("```\n")
+                    f.write(variation)
+                    f.write("\n```\n\n")
+            
+            # End frame options
+            f.write("### End Frame (with Style References)\n\n")
+            if "end_frame_simple" in prompts:
+                f.write("**Simple (Recommended):**\n")
+                f.write("```\n")
+                f.write(prompts['end_frame_simple'])
+                f.write("\n```\n\n")
+            
+            if "end_frame_detailed" in prompts:
+                f.write("**Detailed:**\n")
+                f.write("```\n")
+                f.write(prompts['end_frame_detailed'])
+                f.write("\n```\n\n")
+            
+            # Add workflow notes
+            f.write("## Workflow Notes\n\n")
+            f.write("1. Generate start frame with the simple prompt\n")
+            f.write("2. Use V7 Style References for end frame\n")
+            f.write("3. Upload start frame + previous clip as references\n")
+            f.write("4. Use `--sw 200-400` for style strength\n")
+        
+        console.print(f"📝 Saved to story development: {enhanced_file}")
+    
     def _save_prompts_to_files(self, scene_name: str, prompts: Dict) -> None:
         """Save prompts to files for easy copy-pasting"""
         prompts_dir = self.project_root / "02_prompts" / "midjourney"
@@ -265,12 +397,25 @@ class StyleframeManager:
         with open(filepath, 'w') as f:
             f.write(f"Midjourney Prompts for {scene_name}\n")
             f.write("=" * 50 + "\n")
-            f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+            f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            
+            # Add AI enhancement note if applicable
+            if "variations" in prompts and prompts["variations"]:
+                f.write("🤖 AI-Enhanced with Variations\n")
+            f.write("\n")
             
             # Always show start frame first and clearly
             if "start_frame" in prompts:
                 f.write("🎬 STEP 1 - Generate Start Frame (Simple Content Prompt):\n")
                 f.write(f"{prompts['start_frame']}\n\n")
+            
+            # Show variations if present
+            if "variations" in prompts and prompts["variations"]:
+                f.write("🔄 Alternative Variations (Different Moods/Styles):\n")
+                for i, variation in enumerate(prompts["variations"], 1):
+                    f.write(f"\nVariation {i}:\n")
+                    f.write(f"{variation}\n")
+                f.write("\n")
             
             # Show workflow note
             if "workflow_note" in prompts:
@@ -280,7 +425,7 @@ class StyleframeManager:
             # Show end frame prompts for Style References
             f.write("🎨 STEP 2 - End Frame with Style References:\n")
             for frame_type, prompt in prompts.items():
-                if frame_type not in ["start_frame", "workflow_note"]:
+                if frame_type not in ["start_frame", "workflow_note", "variations"]:
                     if "simple" in frame_type:
                         f.write(f"Simple Content Prompt (Recommended):\n")
                     elif "detailed" in frame_type:
@@ -294,12 +439,22 @@ class StyleframeManager:
         
         console.print(f"💾 Saved: {filepath}")
 
-    def interactive_workflow(self, scene_name: str, base_description: str) -> None:
+    def interactive_workflow(self, scene_name: str, base_description: str, use_llm: bool = None) -> None:
         """Interactive workflow that walks user through the entire process"""
         console.print(Panel.fit(
             f"🎬 Interactive Styleframe Workflow for [bold cyan]{scene_name}[/bold cyan]",
             style="bold blue"
         ))
+        
+        # Ask about LLM enhancement if not specified and available
+        if use_llm is None and self.prompt_enhancer:
+            console.print("\n[bold cyan]🤖 AI Enhancement Available[/bold cyan]")
+            console.print("Would you like to use AI to enhance your prompts?")
+            console.print("• [bold green]Yes:[/bold green] Generate cinematic prompts with variations")
+            console.print("• [bold yellow]No:[/bold yellow] Use standard prompt generation")
+            use_llm = Confirm.ask("Use AI enhancement?", default=True)
+        elif use_llm is None:
+            use_llm = False
         
         # Step 1: Introduce V7 Style References Workflow
         console.print("\n[bold cyan]🎨 Midjourney V7 Style References Workflow[/bold cyan]")
@@ -311,15 +466,35 @@ class StyleframeManager:
         console.print("• [bold red]Avoid:[/bold red] 'copy this style', 'the look of this image but...'")
         console.print("• [bold green]Good:[/bold green] 'detailed portrait of Kaladin', 'chasm depths with mist'")
         
-        # Generate prompts
+        # Generate prompts with optional LLM enhancement
         console.print("\n[bold yellow]Step 1: Generate simple start frame prompt...[/bold yellow]")
-        prompts = self.generate_midjourney_prompts(scene_name, base_description)
+        if use_llm:
+            console.print("🤖 Using AI to enhance prompts...")
+            num_variations = 3
+            if Confirm.ask("Would you like multiple variations?", default=True):
+                num_variations = int(Prompt.ask("How many variations?", default="3"))
+        else:
+            num_variations = 1
+        
+        prompts = self.generate_midjourney_prompts(
+            scene_name, 
+            base_description,
+            use_llm=use_llm,
+            num_variations=num_variations
+        )
         
         # Display start frame prompt (plain text for easy copying)
         console.print("\n[bold green]🎨 Start Frame Prompt (Simple & Content-Focused):[/bold green]")
         console.print("=" * 80)
         console.print(prompts["start_frame"])
         console.print("=" * 80)
+        
+        # Display variations if generated
+        if "variations" in prompts and prompts["variations"]:
+            console.print("\n[bold magenta]🔄 Alternative Variations:[/bold magenta]")
+            for i, variation in enumerate(prompts["variations"], 1):
+                console.print(f"\n[bold cyan]Variation {i}:[/bold cyan]")
+                console.print(variation)
         
         # Wait for user to generate start frame
         console.print("\n[bold yellow]Step 2: Generate your start frame[/bold yellow]")
@@ -461,6 +636,11 @@ class StyleframeManager:
         # Save prompts for reference
         self._save_prompts_to_files(scene_name, ref_prompts)
         console.print(f"💾 All prompts saved for future reference")
+        
+        # Also save to story development if using LLM
+        if use_llm and ("variations" in ref_prompts or "variations" in prompts):
+            self._save_prompts_to_story_markdown(scene_name, ref_prompts if ref_prompts else prompts)
+            console.print(f"📚 Enhanced prompts saved to story development")
         
         # Auto-progression options
         self._offer_next_steps(scene_name, base_description)
@@ -790,6 +970,10 @@ def main():
     prompts_parser.add_argument("--save", action="store_true",
                                help="Save prompts to files in 02_prompts/midjourney/")
     prompts_parser.add_argument("--start-ref", help="Path to start frame for style reference")
+    prompts_parser.add_argument("--llm-enhance", action="store_true",
+                               help="Use LLM to enhance prompts with cinematic details")
+    prompts_parser.add_argument("--variations", type=int, default=3,
+                               help="Number of variations to generate (with --llm-enhance)")
     
     # Get reference command
     ref_parser = subparsers.add_parser("get-ref", help="Get best reference image for scene")
@@ -827,7 +1011,15 @@ def main():
     
     elif args.command == "prompts":
         start_ref = getattr(args, 'start_ref', None)
-        prompts = manager.generate_midjourney_prompts(args.scene_name, args.description, start_ref)
+        use_llm = getattr(args, 'llm_enhance', False)
+        variations = getattr(args, 'variations', 3)
+        prompts = manager.generate_midjourney_prompts(
+            args.scene_name, 
+            args.description, 
+            start_ref, 
+            use_llm=use_llm,
+            num_variations=variations
+        )
         console.print(f"\n🎨 V7 Style References Prompts for {args.scene_name}:\n")
         
         # Show start frame first
@@ -843,7 +1035,7 @@ def main():
         # Show end frame options
         console.print(f"[bold cyan]🎨 End Frame Options (Use with Style References):[/bold cyan]")
         for frame_type, prompt in prompts.items():
-            if frame_type not in ["start_frame", "workflow_note"]:
+            if frame_type not in ["start_frame", "workflow_note", "variations"]:
                 if "simple" in frame_type:
                     console.print(f"[bold green]Simple Content (Recommended):[/bold green]")
                 elif "detailed" in frame_type:
@@ -851,6 +1043,13 @@ def main():
                 else:
                     console.print(f"[bold cyan]{frame_type.replace('_', ' ').title()}:[/bold cyan]")
                 console.print(f"{prompt}\n")
+        
+        # Show variations if generated
+        if "variations" in prompts and prompts["variations"]:
+            console.print(f"[bold magenta]🔄 Variations (Different Moods):[/bold magenta]")
+            for i, variation in enumerate(prompts["variations"], 1):
+                console.print(f"  {i}. {variation}")
+            console.print()
         
         # Save to files if requested
         if hasattr(args, 'save') and args.save:

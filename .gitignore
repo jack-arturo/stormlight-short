@@ -6,6 +6,7 @@ Users/jgarturo/Projects/OpenAI/mcp-servers/mcp-wp/logs/wordpress-api.log
 .env.local
 .env.production
 .env.staging
+.env.example
 *.key
 
 # Google Cloud Service Account credentials
@@ -19,3 +20,4 @@ archive/
 /01_styleframes_midjourney
 /archive
 .DS_Store
+/tmp

@@ -1,0 +1,19 @@
+Midjourney Prompts for the_magic_system
+==================================================
+Generated: 2025-08-15 21:55:10
+
+🎬 STEP 1 - Generate Start Frame (Simple Content Prompt):
+close-up of glowing gemstones embedded in weapons and armor establishing shot --no text --ar 16:9 --q 2
+
+📋 V7 Style References Workflow:
+V7 STYLE REFERENCES WORKFLOW: 1) Generate start frame with simple content prompt, 2) Click start frame to expand, 3) Add Style References (upload previous clip + start frame), 4) Use simple descriptive prompts (avoid style words), 5) Adjust --sw 200-400 for style strength, 6) Generate variations. Let references handle the style!
+
+🎨 STEP 2 - End Frame with Style References:
+Simple Content Prompt (Recommended):
+closer detailed view --sw 300 --ar 16:9 --q 2
+
+Detailed Content Prompt (Alternative):
+close-up of glowing gemstones embedded in weapons and armor closer detailed view --sw 300 --ar 16:9 --q 2
+
+💡 Remember: Upload your start frame + any previous clip as Style References!
+💡 Use --sw 200-400 to control style influence strength.

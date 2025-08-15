@@ -7,6 +7,9 @@ google-cloud-aiplatform>=1.38.0,<2.0.0
 # Gemini API for Veo 3 Video Generation
 google-generativeai>=0.8.0,<1.0.0
 
+# OpenAI API for LLM-powered prompt generation
+openai>=1.0.0,<2.0.0
+
 # Configuration Management
 pyyaml>=6.0,<7.0
 python-dotenv>=1.0.0,<2.0.0
@@ -24,10 +27,13 @@ mypy>=1.5.0,<2.0.0
 requests>=2.31.0,<3.0.0
 click>=8.1.0,<9.0.0
 tqdm>=4.65.0,<5.0.0
+rich>=13.0.0,<14.0.0
+
+# Image Processing (used for styleframe optimization)
+pillow>=10.0.0,<11.0.0
 
 # Optional: Video Processing (if needed for short film assets)
 # opencv-python>=4.8.0,<5.0.0
-# pillow>=10.0.0,<11.0.0
 
 # Optional: Audio Processing (if needed for sound design)
 # librosa>=0.10.0,<1.0.0

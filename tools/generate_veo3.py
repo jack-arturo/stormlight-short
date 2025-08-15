@@ -15,6 +15,13 @@ from typing import Optional, Dict, Any
 import argparse
 import base64
 
+try:
+    from prompt_enhancer import PromptEnhancer
+    LLM_AVAILABLE = True
+except ImportError:
+    LLM_AVAILABLE = False
+    print("⚠️  LLM enhancement not available. Install with: pip install openai")
+
 # Load environment variables from .env file
 def load_env_file():
     """Load environment variables from .env file if it exists"""
@@ -42,6 +49,12 @@ class Veo3Generator:
         self.flow_exports_dir.mkdir(exist_ok=True)
         self.prompts_dir.mkdir(exist_ok=True)
         
+        # Initialize prompt enhancer if available
+        if LLM_AVAILABLE:
+            self.prompt_enhancer = PromptEnhancer(project_root=self.project_root)
+        else:
+            self.prompt_enhancer = None
+        
         # Set up API
         self.api_key = os.getenv('GEMINI_API_KEY')
         if not self.api_key:
@@ -63,7 +76,10 @@ class Veo3Generator:
                       take_number: int = None,
                       reference_image: Optional[Path] = None,
                       notes: str = "",
-                      auto_discover_styleframes: bool = True) -> Dict[str, Any]:
+                      auto_discover_styleframes: bool = True,
+                      use_llm: bool = False,
+                      camera_movement: str = None,
+                      mood: str = None) -> Dict[str, Any]:
         """
         Generate a video using Veo 3 via Gemini REST API
         
@@ -73,10 +89,35 @@ class Veo3Generator:
             take_number: Take number (auto-incremented if None)
             reference_image: Optional reference image path
             notes: Optional notes about the generation
+            auto_discover_styleframes: Whether to auto-discover styleframes
+            use_llm: Whether to use LLM enhancement for the prompt
+            camera_movement: Specific camera movement for LLM enhancement
+            mood: Desired mood for LLM enhancement
             
         Returns:
             Dictionary with generation results
         """
+        # Enhance prompt with LLM if requested
+        if use_llm and self.prompt_enhancer:
+            print("🤖 Enhancing prompt with LLM...")
+            enhanced = self.prompt_enhancer.enhance_veo_prompt(
+                prompt,
+                scene_name,
+                duration=8,  # Veo 3 generates 8-second clips
+                camera_movement=camera_movement,
+                mood=mood,
+                use_llm=True
+            )
+            
+            # Use the enhanced prompt and display it
+            original_prompt = prompt
+            prompt = enhanced.get("detailed", prompt)
+            print(f"✨ Enhanced prompt: {prompt[:100]}...")
+            
+            # Display cost if available
+            if "cost" in enhanced:
+                print(f"💰 LLM cost: ${enhanced['cost']:.4f}")
+        
         print(f"🎬 Generating video for scene: {scene_name}")
         print(f"📝 Prompt: {prompt}")
         
@@ -357,6 +398,12 @@ Examples:
                        help="Production notes (optional, use quotes)")
     parser.add_argument("--no-auto-image", action="store_true",
                        help="Disable automatic styleframe discovery")
+    parser.add_argument("--llm-prompt", action="store_true",
+                       help="Use LLM to enhance the prompt with cinematic details")
+    parser.add_argument("--camera", 
+                       help="Camera movement (e.g., 'tracking shot', 'slow push in')")
+    parser.add_argument("--mood",
+                       help="Desired mood (e.g., 'heroic', 'desperate', 'mystical')")
     
     args = parser.parse_args()
     
@@ -370,7 +417,10 @@ Examples:
         take_number=args.take,
         reference_image=args.image,
         notes=args.notes,
-        auto_discover_styleframes=not args.no_auto_image
+        auto_discover_styleframes=not args.no_auto_image,
+        use_llm=args.llm_prompt,
+        camera_movement=args.camera,
+        mood=args.mood
     )
     
     if result["success"]:

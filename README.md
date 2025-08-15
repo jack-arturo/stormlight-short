@@ -8,30 +8,32 @@
 python3 tools/stormlight_control.py
 
 # Or use individual tools:
-# Interactive workflow - complete styleframe creation
+# Interactive workflow with AI enhancement
 python3 tools/styleframe_manager.py interactive title_sequence "Sweeping aerial shot across alien Roshar landscape"
 
-# Generate video (automatically uses your organized styleframes!)
-python3 tools/generate_veo3.py "Sweeping aerial shot across alien Roshar landscape with camera movement" --scene title_sequence
+# Generate video with AI-enhanced cinematic prompts
+python3 tools/generate_veo3.py "Sweeping aerial shot" --scene title_sequence --llm-prompt --mood heroic
 ```
 
-### 🎯 **New Interactive Workflow**
-1. **Run interactive command** - Step-by-step guidance
-2. **Generate start frame** in Midjourney - Copy/paste clean prompts
-3. **Save to `tmp/tmp.png`** - Auto-optimizes to JPG (9MB→1MB)
-4. **Use Midjourney Editor** - Erase/Smart Erase for matching end frame
-5. **Auto-organization** - Files organized with metadata tracking
+### 🎯 **New Interactive Workflow with AI Enhancement**
+1. **Run interactive command** - Step-by-step guidance with AI option
+2. **Choose AI enhancement** - Generate cinematic prompts with variations
+3. **Generate start frame** in Midjourney - Copy/paste AI-enhanced prompts
+4. **Save to `tmp/tmp.png`** - Auto-optimizes to JPG (9MB→1MB)
+5. **Use Midjourney Editor** - Erase/Smart Erase for matching end frame
+6. **Auto-organization** - Files organized with enhanced prompts saved to markdown
 
 ## ✅ **Production Ready**
 
-- **🎨 Interactive Styleframe Workflow**: Step-by-step Midjourney integration with Editor tools
+- **🤖 AI-Powered Prompt Generation**: GPT-4-mini integration for cinematic prompts and variations
+- **🎨 Interactive Styleframe Workflow**: Step-by-step Midjourney integration with AI enhancement
 - **🖼️ Auto-Image Optimization**: PNG→JPG conversion, compression, resizing (9MB→1MB)
-- **🎬 Veo 3 Generation**: 720p, 8-second clips via Gemini API (~2-5 min generation)
+- **🎬 Veo 3 Generation**: 720p, 8-second clips via Gemini API with AI prompt enhancement
 - **🎵 Complete Audio Pipeline**: Aiva + Stable Audio + Manual Foley integration
-- **📁 Smart Organization**: Automatic file management with metadata tracking
+- **📁 Smart Organization**: Automatic file management with enhanced prompt saving to markdown
 - **🚫 Text-Free Prompts**: Clean generation avoiding Midjourney text artifacts
-- **🔒 Secure Setup**: Environment-based API key management
-- **📊 Pipeline Monitoring**: Real-time status tracking and cost monitoring
+- **🔒 Secure Setup**: Environment-based API key management for both OpenAI and Gemini
+- **📊 Pipeline Monitoring**: Real-time status tracking, cost monitoring, and AI status display
 
 ## 🎭 **Arcane Animation Style**
 
@@ -86,12 +88,16 @@ python3 tools/stormlight_control.py
 
 ## 🎨 **Complete Workflow**
 
-### 1. Generate Midjourney Prompts
+### 1. Generate Midjourney Prompts (Now with AI Enhancement!)
 ```bash
-# Scene-specific prompts with Arcane styling
-python3 tools/styleframe_manager.py prompts kaladin_intro "Kaladin on cliff edge storm approaching"
+# AI-enhanced prompts with variations (Recommended!)
+python3 tools/styleframe_manager.py prompts kaladin_intro "Kaladin on cliff edge storm approaching" --llm-enhance --variations 3
+
+# Traditional prompts (without AI)
 python3 tools/styleframe_manager.py prompts bridge_run "Bridge crew charging under arrow fire"
-python3 tools/styleframe_manager.py prompts highstorm "Massive storm wall approaching"
+
+# Interactive workflow with AI option
+python3 tools/styleframe_manager.py interactive
 ```
 
 ### 2. Organize Styleframes
@@ -101,13 +107,15 @@ python3 tools/styleframe_manager.py organize image.png kaladin_intro start
 python3 tools/styleframe_manager.py organize image.png kaladin_intro end
 ```
 
-### 3. Generate Videos with Audio
+### 3. Generate Videos (Now with AI-Enhanced Prompts!)
 ```bash
+# AI-enhanced cinematic prompts with camera movement and mood
+python3 tools/generate_veo3.py "Kaladin stands defiantly" --scene kaladin_intro --llm-prompt --camera "slow push-in" --mood "heroic"
+
 # Complete video + audio generation
-python3 tools/generate_veo3.py "Kaladin stands defiantly as storm approaches" --scene kaladin_intro --with-audio
 python3 tools/generate_veo3.py "Bridge crew charges across chasm" --scene bridge_run --with-audio
 
-# Video only (no audio)
+# Traditional prompt (without AI)
 python3 tools/generate_veo3.py "Kaladin stands defiantly as storm approaches" --scene kaladin_intro
 ```
 
@@ -138,12 +146,20 @@ python3 tools/pipeline_monitor.py --health-check
 
 ## 🎯 **Key Features**
 
-- **🤖 Automated Prompts**: Scene-specific Midjourney prompts with Arcane styling
+### **AI-Powered Features (NEW!)**
+- **🤖 GPT-4-mini Integration**: Intelligent prompt generation at ~$0.01-0.02 per generation
+- **🎨 Cinematic Prompt Enhancement**: Professional film language with camera movements
+- **🎬 Multiple Variations**: Generate 3-5 variations per scene for creative options
+- **📝 Automatic Documentation**: AI prompts saved to markdown with metadata
+- **💾 Smart Caching**: Reduce costs with intelligent response caching
+- **🎯 Context-Aware**: Stormlight and Arcane style specialization
+
+### **Core Pipeline Features**
 - **📸 Smart References**: Auto-discovery of styleframes for video generation
-- **💰 Cost Tracking**: Real-time monitoring of generation costs
+- **💰 Cost Tracking**: Real-time monitoring of generation costs (both AI and video)
 - **🔄 Take Management**: Automatic versioning and iteration tracking
 - **📊 Pipeline Health**: Comprehensive monitoring and status reporting
-- **🔒 Secure Setup**: Environment-based API key management
+- **🔒 Secure Setup**: Environment-based API key management (OpenAI + Gemini)
 
 ## 📚 **Documentation**
 
@@ -173,21 +189,27 @@ python3 tools/pipeline_monitor.py --health-check
    pip install -r requirements.txt
    ```
 
-3. **Get Gemini API Key**
-   - Visit: https://aistudio.google.com/app/apikey
-   - Create new API key
-   - Copy the key for next step
+3. **Get API Keys**
+   - **Gemini API** (Required for video generation):
+     - Visit: https://aistudio.google.com/app/apikey
+     - Create new API key
+   - **OpenAI API** (Optional for AI enhancement):
+     - Visit: https://platform.openai.com/api-keys
+     - Create new API key
 
 4. **Configure Environment**
    ```bash
    # Create environment file
    cp .env.template .env
    
-   # Edit .env with your API key
+   # Edit .env with your API keys
    nano .env
+   # Add: GEMINI_API_KEY=your_gemini_key_here
+   # Add: OPENAI_API_KEY=your_openai_key_here (optional)
    
    # Add to shell profile for persistence
    echo 'export GEMINI_API_KEY=your_key_here' >> ~/.zshrc
+   echo 'export OPENAI_API_KEY=your_key_here' >> ~/.zshrc  # Optional
    source ~/.zshrc
    ```
 
@@ -200,6 +222,7 @@ python3 tools/pipeline_monitor.py --health-check
 
 #### **Current Pipeline Costs**
 - **Veo 3 Generation**: ~$0.15 per 8-second clip (720p)
+- **GPT-4-mini Enhancement**: ~$0.01-0.02 per prompt generation (with variations)
 - **Midjourney**: $10-30/month subscription (unlimited generations)
 - **Storage**: Minimal (local files, optional cloud backup)
 

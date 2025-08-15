@@ -1,0 +1,31 @@
+Midjourney Prompts for test_scene
+==================================================
+Generated: 2025-08-15 22:03:46
+🤖 AI-Enhanced with Variations
+
+🎬 STEP 1 - Generate Start Frame (Simple Content Prompt):
+**Prompt Variation 2**: On a vast, stormy plain, two armies collide in a breathtaking display of strength and strategy. The characters, designed with painterly realism, exhibit intricate details in their armor and weapons, enhanced by dramatic rim lighting that accentuates their movements. The ground is a mix of slate gray rock and splashes of electric blue energy as the storm brews above, while deep purple clouds swirl ominously, framing the chaos of the battle and evoking a sense of urgency. --style raw --ar 16:9 --q 2 --no text
+
+🔄 Alternative Variations (Different Moods/Styles):
+
+Variation 1:
+A serene forest glade at dawn, gentle sunlight filtering through the leaves, casting soft shadows on the dewy grass, evoking a sense of peace and tranquility as a lone deer grazes quietly., establishing shot --sw 300 --ar 16:9 --q 2
+
+Variation 2:
+A dense, misty forest at twilight, thick fog swirling around ancient trees, creating an eerie atmosphere with muted colors and whispering winds, as ghostly silhouettes flit among the shadows., establishing shot --sw 300 --ar 16:9 --q 2
+
+Variation 3:
+A vibrant forest in the height of autumn, brilliant foliage bursting with reds and golds under a golden sunset, capturing a joyful and lively spirit as playful squirrels dart between branches, leaves swirling in the crisp air., establishing shot --sw 300 --ar 16:9 --q 2
+
+📋 V7 Style References Workflow:
+Use V7 Style References
+
+🎨 STEP 2 - End Frame with Style References:
+Simple Content Prompt (Recommended):
+**Epic Battle on Stormy Plains**: A breathtaking clash unfolds on a vast, windswept plain under a tempestuous sky. Dark slate gray clouds swirl ominously overhead, illuminated by flashes of electric blue lightning that cast dramatic shadows across the battlefield. Warriors clad in intricate armor engage fiercely, their expressions fierce and determined, as deep purple hues bleed into the atmosphere, enhancing the tension. The hand-painted textures of their gear and the swirling grass add a tactile quality, while the rim lighting highlights the intensity of their conflict against the stormy backdrop. --style raw --ar 16:9 --q 2 --no text
+
+Detailed Content Prompt (Alternative):
+**Stormy Plains Showdown**: A dynamic scene captures an epic confrontation on a rugged, open plain, where roaring winds carry the scent of rain. The landscape is painted in rich, hand-crafted textures, with slate gray skies filled with rolling clouds punctuated by brilliant electric blue flashes. Combatants, with deep purple accents on their armor, clash in a whirlwind of motion, their silhouettes sharply outlined by dramatic rim lighting. The tension in the air is palpable, with the storm mirroring the chaos of battle, creating a visceral and engaging atmosphere. --style raw --ar 16:9 --q 2 --no text
+
+💡 Remember: Upload your start frame + any previous clip as Style References!
+💡 Use --sw 200-400 to control style influence strength.
