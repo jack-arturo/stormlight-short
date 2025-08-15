@@ -602,10 +602,11 @@ class StyleframeManager:
 
     def _parse_clips_from_markdown(self, markdown_file: Path) -> List[tuple[str, str]]:
         """
-        Parse markdown file to extract clip definitions.
-        Looks for patterns like:
-        ### Clip X: Scene Name (timing)
-        **Visual**: Description here
+        Dynamically parse markdown file to extract clip definitions.
+        Adapts to various formats:
+        - ### Clip X: Scene Name (timing)
+        - **Visual**: Description or **Visual Content**: Description
+        - **Simple Prompts**: "prompt text" (extracts first prompt)
         """
         clips = []
         
@@ -615,24 +616,31 @@ class StyleframeManager:
             
             import re
             
-            # Pattern to match clip sections
-            # Matches: ### Clip X: Title (timing) followed by **Visual**: description
-            clip_pattern = r'### Clip \d+: ([^(]+)\([^)]+\)\s*\n[^*]*\*\*Visual\*\*: ([^\n]+(?:\n- [^\n]+)*)'
+            # Split content into clip sections
+            clip_sections = re.split(r'### Clip \d+:', content)[1:]  # Skip content before first clip
             
-            matches = re.findall(clip_pattern, content, re.MULTILINE | re.DOTALL)
-            
-            for title, visual_desc in matches:
+            for section in clip_sections:
+                # Extract clip title from the first line
+                lines = section.strip().split('\n')
+                if not lines:
+                    continue
+                
+                # First line should contain: Scene Name (timing)
+                title_line = lines[0].strip()
+                title_match = re.match(r'([^(]+)', title_line)
+                if not title_match:
+                    continue
+                
+                title = title_match.group(1).strip()
+                
                 # Clean up the title to create scene_name
-                scene_name = title.strip().lower()
+                scene_name = title.lower()
                 scene_name = re.sub(r'[^\w\s-]', '', scene_name)  # Remove special chars
                 scene_name = re.sub(r'\s+', '_', scene_name)      # Replace spaces with underscores
                 scene_name = scene_name.strip('_')                # Remove leading/trailing underscores
                 
-                # Clean up visual description
-                visual_desc = visual_desc.strip()
-                # Remove bullet points and extra whitespace
-                visual_desc = re.sub(r'\n- ', ' ', visual_desc)
-                visual_desc = re.sub(r'\s+', ' ', visual_desc)
+                # Look for visual description in various formats
+                visual_desc = self._extract_visual_description(section)
                 
                 if scene_name and visual_desc:
                     clips.append((scene_name, visual_desc))
@@ -641,6 +649,58 @@ class StyleframeManager:
             console.print(f"⚠️  Error parsing {markdown_file}: {e}")
         
         return clips
+    
+    def _extract_visual_description(self, section: str) -> str:
+        """
+        Extract visual description from a clip section, handling various formats.
+        Priority order:
+        1. **Simple Prompts**: "quoted prompt"
+        2. **Visual Content**: description
+        3. **Visual**: description
+        4. First bullet point under visual content
+        """
+        import re
+        
+        # Try to find Simple Prompts with quoted text (highest priority)
+        simple_prompt_pattern = r'\*\*Simple Prompts?\*\*:.*?"([^"]+)"'
+        simple_match = re.search(simple_prompt_pattern, section, re.DOTALL | re.IGNORECASE)
+        if simple_match:
+            return simple_match.group(1).strip()
+        
+        # Try to find Visual Content (second priority)
+        visual_content_pattern = r'\*\*Visual Content\*\*:\s*([^\n]+(?:\n- [^\n]+)*)'
+        visual_content_match = re.search(visual_content_pattern, section, re.DOTALL)
+        if visual_content_match:
+            desc = visual_content_match.group(1).strip()
+            # Clean up bullet points and extra whitespace
+            desc = re.sub(r'\n- ', ' ', desc)
+            desc = re.sub(r'\s+', ' ', desc)
+            return desc
+        
+        # Try to find Visual (legacy format)
+        visual_pattern = r'\*\*Visual\*\*:\s*([^\n]+(?:\n- [^\n]+)*)'
+        visual_match = re.search(visual_pattern, section, re.DOTALL)
+        if visual_match:
+            desc = visual_match.group(1).strip()
+            # Clean up bullet points and extra whitespace
+            desc = re.sub(r'\n- ', ' ', desc)
+            desc = re.sub(r'\s+', ' ', desc)
+            return desc
+        
+        # Fallback: look for first bullet point after any visual-related header
+        bullet_pattern = r'\*\*(?:Visual|Simple Prompts?).*?\n.*?- ([^\n]+)'
+        bullet_match = re.search(bullet_pattern, section, re.DOTALL | re.IGNORECASE)
+        if bullet_match:
+            return bullet_match.group(1).strip()
+        
+        # Last resort: extract first meaningful line after title
+        lines = section.strip().split('\n')[1:]  # Skip title line
+        for line in lines:
+            line = line.strip()
+            if line and not line.startswith('**') and not line.startswith('-'):
+                return line
+        
+        return ""
 
     def suggest_next_clip(self) -> Optional[tuple[str, str]]:
         """
