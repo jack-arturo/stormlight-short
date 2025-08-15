@@ -334,6 +334,18 @@ Total Cost: ${jobs_status['total_cost']:.2f}
             health["status"] = "critical"
         
         return health
+    
+    async def run_status_report(self):
+        """Run one-time status report"""
+        jobs_status = await self.get_vertex_job_status()
+        asset_counts = await self.get_asset_counts()
+        sync_status = await self.get_sync_status()
+        
+        console.print("\n📊 Pipeline Status Report\n", style="bold cyan")
+        console.print(f"Vertex AI Jobs: {len(jobs_status['active'])} active, {len(jobs_status['completed'])} completed")
+        console.print(f"Total Cost: ${jobs_status['total_cost']:.2f}")
+        console.print(f"Assets: {sum(asset_counts.values())} total files")
+        console.print(f"Last Sync: {sync_status['last_sync']}")
 
 
 def main():
@@ -367,20 +379,7 @@ def main():
         asyncio.run(monitor.run_dashboard())
     else:
         # Run one-time status report
-        asyncio.run(monitor._run_status_report())
-
-
-async def _run_status_report(self):
-    """Run one-time status report"""
-    jobs_status = await self.get_vertex_job_status()
-    asset_counts = await self.get_asset_counts()
-    sync_status = await self.get_sync_status()
-    
-    console.print("\n📊 Pipeline Status Report\n", style="bold cyan")
-    console.print(f"Vertex AI Jobs: {len(jobs_status['active'])} active, {len(jobs_status['completed'])} completed")
-    console.print(f"Total Cost: ${jobs_status['total_cost']:.2f}")
-    console.print(f"Assets: {sum(asset_counts.values())} total files")
-    console.print(f"Last Sync: {sync_status['last_sync']}")
+        asyncio.run(monitor.run_status_report())
 
 
 if __name__ == "__main__":

@@ -1,0 +1,96 @@
+# Act I: World Introduction - Vertex AI Prompt Templates
+# Stormlight: Into the Tempest
+# Duration: 60 seconds, 9 clips with dynamic timing
+
+scene_name: act1_world_introduction
+description: "Opening act establishing Roshar, introducing main characters, revealing magic system"
+
+clips:
+  # Clip 1: Title Sequence (6 seconds)
+  clip_01_title_sequence:
+    duration: 6
+    prompt: "Sweeping aerial cinematography over alien fantasy landscape, strange rock formations jutting from barren ground, crystalline plants glowing softly, no grass only alien moss, stormy dark clouds gathering overhead, otherworldly atmosphere, epic fantasy film opening, cinematic wide shot slowly revealing vast alien world"
+    negative_prompt: "earth plants, normal vegetation, sunny weather, modern buildings, text overlay, title cards"
+    style_notes: "Think Attack on Titan meets Studio Ghibli, alien beauty"
+    camera_movement: "slow aerial sweep, gradual reveal"
+    
+  # Clip 2: The Shattered Plains (8 seconds)  
+  clip_02_shattered_plains:
+    duration: 8
+    prompt: "Dramatic aerial reveal of massive canyon system, countless deep chasms cutting through stone plateaus, camera diving from high altitude down into dark misty depths, showing incredible scale and danger, bridges spanning between plateau tops, war camps visible on plateau edges, fantasy landscape, epic scope"
+    negative_prompt: "small scale, shallow canyons, vegetation, water, modern structures"
+    style_notes: "Emphasize massive scale and vertigo-inducing depth"
+    camera_movement: "high altitude to diving into chasm"
+    
+  # Clip 3: Kaladin Introduction (7 seconds)
+  clip_03_kaladin_intro:
+    duration: 7
+    prompt: "Close-up introduction of exhausted dark-haired young man with slave brands on forehead, hopeless expression, carrying massive wooden bridge beam on shoulders with other broken men, dressed in ragged slave clothing, sweat and dirt, defeated posture, somber lighting, character portrait in motion"
+    negative_prompt: "happy expression, clean appearance, armor, weapons, modern clothing"
+    style_notes: "Emotional character moment, show despair"
+    camera_movement: "slow push in on face, then pull back to reveal bridge crew"
+    
+  # Clip 4: Adolin Introduction (6 seconds)
+  clip_04_adolin_intro:
+    duration: 6
+    prompt: "Handsome young nobleman in ornate military uniform, confident charismatic smile, practicing expert swordwork in training grounds, natural leader presence, other soldiers watching with respect, war camp setting, golden hour lighting highlighting noble bearing"
+    negative_prompt: "magical armor, glowing weapons, peasant clothing, modern setting"
+    style_notes: "Princely warrior, natural charisma"
+    camera_movement: "medium shot circling during sword practice"
+    
+  # Clip 5: The Magic System (8 seconds)
+  clip_05_magic_system:
+    duration: 8
+    prompt: "Glowing gemstones embedded in lanterns and devices, luminous blue-white energy swirling like smoke, tiny spirit creatures floating through air leaving light trails, ethereal magical atmosphere, gems pulsing with inner light, fantasy magic visualization, mystical energy permeating daily life"
+    negative_prompt: "technological devices, electric lights, modern elements, fire magic"
+    style_notes: "Ethereal, soft magic system based on light and gems"
+    camera_movement: "slow tracking shot through magical environment"
+    
+  # Clip 6: Dalinar Introduction (7 seconds)
+  clip_06_dalinar_intro:
+    duration: 7
+    prompt: "Imposing middle-aged military commander in elaborate ceremonial armor, graying beard, standing over war table with maps, weight of command visible in posture, battle-scarred face showing wisdom and burden, torchlit command tent, other officers in background"
+    negative_prompt: "young appearance, casual clothing, modern military, clean shaven"
+    style_notes: "Gravitas and authority, weathered leader"
+    camera_movement: "low angle establishing authority, slow push in"
+    
+  # Clip 7: Spren Bonds (6 seconds)
+  clip_07_spren_bonds:
+    duration: 6
+    prompt: "Various tiny spirit creatures floating through scene, emotion spren appearing as colored wisps near people, wind spren dancing as ribbons of light, nature spirits interacting with environment, magical creatures visible everywhere, living magic atmosphere"
+    negative_prompt: "large creatures, dark spirits, technological effects, fire elements"
+    style_notes: "Whimsical yet mysterious, Studio Ghibli-inspired"
+    camera_movement: "floating camera following spren movements"
+    
+  # Clip 8: The Parshendi (4 seconds)
+  clip_08_parshendi_intro:
+    duration: 4
+    prompt: "Humanoid warriors with natural armor plating, singing in synchronized harmony while moving, carapace shifting colors with their songs, alien yet beautiful appearance, both threatening and graceful, fantasy creature design"
+    negative_prompt: "human appearance, metal armor, silent movement, orc-like features"
+    style_notes: "Unique enemy design, musical warfare"
+    camera_movement: "quick reveal, emphasis on synchronized movement"
+    
+  # Clip 9: Highstorm Approaching (8 seconds)
+  clip_09_highstorm_approach:
+    duration: 8
+    prompt: "Massive wall of storm clouds approaching on horizon, supernatural lightning crackling with blue and violet colors, debris and objects flying through air, people desperately running for shelter, apocalyptic weather phenomenon, overwhelming natural force"
+    negative_prompt: "normal storm, gentle rain, calm weather, technological elements"
+    style_notes: "Epic environmental threat, supernatural storm"
+    camera_movement: "wide shot showing storm wall, then chaos of people fleeing"
+
+# Technical settings for all clips
+technical_settings:
+  resolution: "1280x720"
+  aspect_ratio: "16:9"
+  frame_rate: 24
+  model: "veo-3-preview"
+  temperature: 0.7
+  guidance_scale: 7.5
+
+# Production notes
+production_notes:
+  - "Maintain consistent character designs across clips"
+  - "Use stormy blue and alien purple color palette"
+  - "Emphasize otherworldly atmosphere throughout"
+  - "No Earth-like vegetation or familiar landscapes"
+  - "Keep magic system consistent - light and gems, not fire"
