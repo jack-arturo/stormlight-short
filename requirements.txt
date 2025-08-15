@@ -1,5 +1,35 @@
-google-cloud-storage>=2.19.0
-google-cloud-aiplatform>=1.109.0
-pillow>=9.4.0
-pyyaml>=6.0
-tenacity>=9.1.0
+# Stormlight Archives Short Film Project - Python Dependencies
+
+# Google Cloud Services
+google-cloud-storage>=2.10.0,<3.0.0
+google-cloud-aiplatform>=1.38.0,<2.0.0
+
+# Configuration Management
+pyyaml>=6.0,<7.0
+python-dotenv>=1.0.0,<2.0.0
+
+# Testing Framework
+pytest>=7.4.0,<8.0.0
+pytest-cov>=4.1.0,<5.0.0
+
+# Development Dependencies
+black>=23.0.0,<24.0.0
+flake8>=6.0.0,<7.0.0
+mypy>=1.5.0,<2.0.0
+
+# Additional Utilities
+requests>=2.31.0,<3.0.0
+click>=8.1.0,<9.0.0
+tqdm>=4.65.0,<5.0.0
+
+# Optional: Video Processing (if needed for short film assets)
+# opencv-python>=4.8.0,<5.0.0
+# pillow>=10.0.0,<11.0.0
+
+# Optional: Audio Processing (if needed for sound design)
+# librosa>=0.10.0,<1.0.0
+# soundfile>=0.12.0,<1.0.0
+
+# Optional: Data Analysis (if needed for project analytics)
+# pandas>=2.1.0,<3.0.0
+# numpy>=1.24.0,<2.0.0
