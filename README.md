@@ -1,101 +1,120 @@
 # 🌪️ Stormlight Archives: Into the Tempest
-> AI-Powered Animated Series Pipeline
+> **Complete AI-Powered Animation Pipeline**: Midjourney → Veo 3 → Final Cut
 
-## 🎯 Quick Start
+## 🚀 Quick Start
 
 ```bash
-# Set API key (one-time setup)
-export GEMINI_API_KEY='your-key-here'  # Get from https://aistudio.google.com/app/apikey
+# 1. Generate Midjourney styleframes
+python3 tools/styleframe_manager.py prompts kaladin_intro "Kaladin on cliff edge storm approaching"
 
-# Generate video
-python3 tools/generate_veo3.py "Your prompt" --scene scene_name
+# 2. Create images in Midjourney, organize them
+python3 tools/styleframe_manager.py organize downloaded_image.png kaladin_intro start
 
-# Check status
-python3 tools/web_workflow_helper.py status
+# 3. Generate video (automatically uses your styleframe!)
+python3 tools/generate_veo3.py "Kaladin stands defiantly as storm approaches" --scene kaladin_intro
 ```
 
-## 📋 Current Status
+## ✅ **Production Ready**
 
-- **Working**: Veo 3 video generation via Gemini API 
-- **Output**: 720p, 8-second clips (~60 second generation)
-- **Storage**: Videos → `04_flow_exports/`, metadata → `02_prompts/ledger.jsonl`
-- **Progress**: 4 clips generated (26.7% of pilot trailer)
+- **🎨 Midjourney Integration**: Automated prompt generation with Arcane-style references
+- **🎬 Veo 3 Generation**: 720p, 8-second clips via Gemini API (~2-5 min generation)
+- **📁 Auto-Organization**: Styleframes → Videos → Metadata tracking
+- **🔒 Secure Setup**: Environment-based API key management
+- **📊 Pipeline Monitoring**: Real-time status tracking and cost monitoring
 
-## 🎬 For Animated Style (Not CGI)
+## 🎭 **Arcane Animation Style**
 
-Add to prompts: "2D animated style, anime-inspired, hand-drawn aesthetic, Studio Ghibli quality"
+All prompts are optimized for **Arcane animation style by Fortiche** with:
+- Painterly realism and dramatic lighting
+- Scene-specific color palettes (storm grays, electric blues, earth tones)
+- Cinematic composition and professional quality
+- `--style raw --ar 16:9 --q 2` for maximum control
 
-## 📁 Project Structure
+## 📁 **Project Structure**
 
 ```
 stormlight_short/
-├── 04_flow_exports/        # Generated videos
-├── 02_prompts/ledger.jsonl # Generation metadata
-├── 07_story_development/   # Story docs & scene breakdowns
-├── tools/
-│   ├── generate_veo3.py   # Main generation script
-│   └── web_workflow_helper.py # Status tracking
-└── GEMINI_API_SETUP.md    # API setup guide
+├── 01_styleframes_midjourney/    # Organized Midjourney styleframes
+│   ├── start_frames/             # Opening shots by scene
+│   ├── end_frames/               # Closing shots by scene
+│   └── reference/                # General reference images
+├── 02_prompts/
+│   ├── ledger.jsonl             # Video generation metadata
+│   └── midjourney/              # Generated Midjourney prompts
+├── 04_flow_exports/             # Generated videos (MP4)
+├── 07_story_development/        # Story docs & scene breakdowns
+└── tools/
+    ├── generate_veo3.py         # Video generation (Veo 3)
+    ├── styleframe_manager.py    # Midjourney workflow
+    └── pipeline_monitor.py      # Status & cost tracking
 ```
 
-## 🛠️ Video Generation Commands
+## 🎨 **Complete Workflow**
 
-### Basic Usage
+### 1. Generate Midjourney Prompts
 ```bash
-python3 tools/generate_veo3.py "PROMPT" --scene SCENE_NAME
+# Scene-specific prompts with Arcane styling
+python3 tools/styleframe_manager.py prompts kaladin_intro "Kaladin on cliff edge storm approaching"
+python3 tools/styleframe_manager.py prompts bridge_run "Bridge crew charging under arrow fire"
+python3 tools/styleframe_manager.py prompts highstorm "Massive storm wall approaching"
 ```
 
-### Full Command Options
+### 2. Organize Styleframes
 ```bash
-python3 tools/generate_veo3.py "Your video description" \
-  --scene scene_name \
-  --take 2 \
-  --image path/to/reference.jpg \
-  --notes "Production notes"
+# After creating images in Midjourney
+python3 tools/styleframe_manager.py organize image.png kaladin_intro start
+python3 tools/styleframe_manager.py organize image.png kaladin_intro end
 ```
 
-### Quick Examples
+### 3. Generate Videos
 ```bash
-# Simple generation
-python3 tools/generate_veo3.py "Kaladin standing on cliff edge, storm approaching" --scene kaladin_intro
-
-# With reference image
-python3 tools/generate_veo3.py "Bridge crew running across chasm" --scene bridge_run --image 01_styleframes_midjourney/bridge-scene.png
-
-# Specific take with notes
-python3 tools/generate_veo3.py "Highstorm wall approaching" --scene highstorm --take 3 --notes "Darker, more ominous version"
+# Automatically uses organized styleframes as reference
+python3 tools/generate_veo3.py "Kaladin stands defiantly as storm approaches" --scene kaladin_intro
+python3 tools/generate_veo3.py "Bridge crew charges across chasm" --scene bridge_run
 ```
 
-### Other Useful Commands
+### 4. Monitor Pipeline
 ```bash
-# Get detailed help with examples
-python3 tools/generate_veo3.py --help
+# Real-time dashboard
+python3 tools/pipeline_monitor.py --dashboard
 
-# Check pipeline status
+# Quick status check
 python3 tools/pipeline_monitor.py
 
-# View generation history
-python3 tools/web_workflow_helper.py status
+# Health check
+python3 tools/pipeline_monitor.py --health-check
 ```
 
-## 📚 Documentation
+## 🎯 **Key Features**
 
-- **[COMMANDS.md](COMMANDS.md)** - Complete command reference with examples
-- **[MIDJOURNEY_WORKFLOW.md](MIDJOURNEY_WORKFLOW.md)** - Styleframe integration workflow
-- **[GEMINI_API_SETUP.md](GEMINI_API_SETUP.md)** - API setup and configuration
-- **[SECURITY.md](SECURITY.md)** - API key security best practices
+- **🤖 Automated Prompts**: Scene-specific Midjourney prompts with Arcane styling
+- **📸 Smart References**: Auto-discovery of styleframes for video generation
+- **💰 Cost Tracking**: Real-time monitoring of generation costs
+- **🔄 Take Management**: Automatic versioning and iteration tracking
+- **📊 Pipeline Health**: Comprehensive monitoring and status reporting
+- **🔒 Secure Setup**: Environment-based API key management
 
-## 🎨 Styleframe Integration
+## 📚 **Documentation**
 
-The pipeline now automatically uses Midjourney styleframes as reference images:
+- **[MIDJOURNEY_WORKFLOW.md](MIDJOURNEY_WORKFLOW.md)** - Complete styleframe workflow
+- **[COMMANDS.md](COMMANDS.md)** - Command reference with examples
+- **[SECURITY.md](SECURITY.md)** - API key security setup
 
-```bash
-# 1. Generate clean Midjourney prompts
-python3 tools/styleframe_manager.py prompts kaladin_intro "Kaladin on cliff edge storm approaching"
+## 🛠️ **Setup**
 
-# 2. Create images in Midjourney, then organize them
-python3 tools/styleframe_manager.py organize image.png kaladin_intro start
+1. **Get API Key**: https://aistudio.google.com/app/apikey
+2. **Set Environment**: `export GEMINI_API_KEY='your-key-here'`
+3. **Install Dependencies**: `pip install -r requirements.txt`
+4. **Test Setup**: `python3 tools/pipeline_monitor.py --health-check`
 
-# 3. Generate video (automatically uses your styleframe!)
-python3 tools/generate_veo3.py "Video prompt" --scene kaladin_intro
-```
+## 🎬 **Scene Types**
+
+- **kaladin_intro**: Heroic defiance, storm grays, windswept atmosphere
+- **bridge_run**: Desperate action, earth tones, chaotic movement
+- **highstorm**: Overwhelming power, electric blues, massive scale
+- **shattered_plains**: Alien desolation, crystal formations
+- **spren**: Mystical wonder, ethereal glows, otherworldly magic
+
+---
+
+**Ready to create epic Stormlight videos with professional Arcane-style animation!** ⚡🌪️
