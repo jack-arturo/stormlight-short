@@ -38,15 +38,48 @@ stormlight_short/
 └── GEMINI_API_SETUP.md    # API setup guide
 ```
 
-## 🛠️ Key Commands
+## 🛠️ Video Generation Commands
 
+### Basic Usage
 ```bash
-# Generate with notes
-python3 tools/generate_veo3.py "Prompt" --scene name --notes "iteration notes"
-
-# Generate with reference image  
-python3 tools/generate_veo3.py "Prompt" --scene name --image path/to/ref.jpg
-
-# List all scenes from story
-python3 tools/web_workflow_helper.py scenes
+python3 tools/generate_veo3.py "PROMPT" --scene SCENE_NAME
 ```
+
+### Full Command Options
+```bash
+python3 tools/generate_veo3.py "Your video description" \
+  --scene scene_name \
+  --take 2 \
+  --image path/to/reference.jpg \
+  --notes "Production notes"
+```
+
+### Quick Examples
+```bash
+# Simple generation
+python3 tools/generate_veo3.py "Kaladin standing on cliff edge, storm approaching" --scene kaladin_intro
+
+# With reference image
+python3 tools/generate_veo3.py "Bridge crew running across chasm" --scene bridge_run --image 01_styleframes_midjourney/bridge-scene.png
+
+# Specific take with notes
+python3 tools/generate_veo3.py "Highstorm wall approaching" --scene highstorm --take 3 --notes "Darker, more ominous version"
+```
+
+### Other Useful Commands
+```bash
+# Get detailed help with examples
+python3 tools/generate_veo3.py --help
+
+# Check pipeline status
+python3 tools/pipeline_monitor.py
+
+# View generation history
+python3 tools/web_workflow_helper.py status
+```
+
+## 📚 Documentation
+
+- **[COMMANDS.md](COMMANDS.md)** - Complete command reference with examples
+- **[GEMINI_API_SETUP.md](GEMINI_API_SETUP.md)** - API setup and configuration
+- **[SECURITY.md](SECURITY.md)** - API key security best practices

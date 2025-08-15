@@ -37,21 +37,42 @@ python3 tools/generate_veo3.py \
   --notes "First Stormlight video using Gemini API"
 ```
 
-## 🎯 Available Commands
+## 🎯 Command Reference
+
+### Basic Syntax
+```bash
+python3 tools/generate_veo3.py "PROMPT" --scene SCENE_NAME [OPTIONS]
+```
+
+### Required Arguments
+- **`"PROMPT"`** - Your video description (in quotes)
+- **`--scene SCENE_NAME`** - Scene identifier (no spaces, use underscores)
+
+### Optional Arguments
+- **`--take NUMBER`** - Take number (default: auto-increments)
+- **`--image PATH`** - Reference image path
+- **`--notes "TEXT"`** - Production notes (in quotes)
+
+### Examples
 
 ```bash
-# Basic generation
-python3 tools/generate_veo3.py "Your prompt here" --scene scene_name
+# Minimal command
+python3 tools/generate_veo3.py "A warrior on a stormy battlefield" --scene kaladin_intro
 
-# With reference image
-python3 tools/generate_veo3.py "Your prompt here" --scene scene_name --image path/to/reference.jpg
+# With all options
+python3 tools/generate_veo3.py "Epic battle scene" --scene bridge_run --take 3 --image styleframes/battle.jpg --notes "Third attempt with better lighting"
 
-# Specific take number
-python3 tools/generate_veo3.py "Your prompt here" --scene scene_name --take 2
-
-# With notes
-python3 tools/generate_veo3.py "Your prompt here" --scene scene_name --notes "Special notes about this generation"
+# Multiple scenes
+python3 tools/generate_veo3.py "Title card with storm clouds" --scene title_sequence
+python3 tools/generate_veo3.py "Character close-up, determined expression" --scene kaladin_closeup
+python3 tools/generate_veo3.py "Wide shot of the Shattered Plains" --scene shattered_plains_wide
 ```
+
+### Pro Tips
+- **Scene names**: Use descriptive names like `kaladin_intro`, `bridge_run_action`, `highstorm_approach`
+- **Prompts**: Be specific about camera angles, lighting, and mood
+- **Takes**: System auto-increments, or specify `--take 2` for retakes
+- **Images**: Use styleframes from `01_styleframes_midjourney/` as reference
 
 ## 📊 What You Get
 

@@ -288,12 +288,26 @@ class Veo3Generator:
 
 def main():
     """Command line interface for Veo 3 generation"""
-    parser = argparse.ArgumentParser(description="Generate Veo 3 videos using Gemini API")
-    parser.add_argument("prompt", help="Text prompt for video generation")
-    parser.add_argument("--scene", default="test_scene", help="Scene name (e.g., title_sequence)")
-    parser.add_argument("--take", type=int, help="Take number (auto-incremented if not provided)")
-    parser.add_argument("--image", type=Path, help="Optional reference image path")
-    parser.add_argument("--notes", default="", help="Optional notes about the generation")
+    parser = argparse.ArgumentParser(
+        description="Generate Veo 3 videos using Gemini API",
+        epilog="""
+Examples:
+  %(prog)s "Kaladin on stormy battlefield" --scene kaladin_intro
+  %(prog)s "Bridge crew running" --scene bridge_run --take 2
+  %(prog)s "Epic battle" --scene fight --image ref.jpg --notes "Third attempt"
+        """,
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument("prompt", 
+                       help="Video description prompt (use quotes for multi-word prompts)")
+    parser.add_argument("--scene", required=True,
+                       help="Scene identifier (required, use underscores not spaces)")
+    parser.add_argument("--take", type=int, 
+                       help="Take number (optional, auto-increments if not provided)")
+    parser.add_argument("--image", type=Path, 
+                       help="Reference image path (optional)")
+    parser.add_argument("--notes", default="", 
+                       help="Production notes (optional, use quotes)")
     
     args = parser.parse_args()
     
