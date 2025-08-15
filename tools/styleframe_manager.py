@@ -13,6 +13,8 @@ import argparse
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
+from rich.prompt import Prompt, Confirm
+import time
 
 console = Console()
 
@@ -132,19 +134,20 @@ class StyleframeManager:
         metadata = self._load_metadata()
         return metadata
     
-    def generate_midjourney_prompts(self, scene_name: str, base_description: str) -> Dict[str, str]:
+    def generate_midjourney_prompts(self, scene_name: str, base_description: str, start_frame_path: str = None) -> Dict[str, str]:
         """
         Generate clean Midjourney prompts optimized for --style raw
         
         Args:
             scene_name: Scene identifier
             base_description: Base scene description
+            start_frame_path: Path to start frame for style reference (optional)
         """
-        return self._generate_raw_prompts(scene_name, base_description)
+        return self._generate_raw_prompts(scene_name, base_description, start_frame_path)
     
 
     
-    def _generate_raw_prompts(self, scene_name: str, base_description: str) -> Dict[str, str]:
+    def _generate_raw_prompts(self, scene_name: str, base_description: str, start_frame_path: str = None) -> Dict[str, str]:
         """Generate clean prompts optimized for --style raw"""
         
         # Scene-specific style keywords (minimal)
@@ -160,8 +163,8 @@ class StyleframeManager:
         # Scene-specific start/end variations
         scene_variations = {
             "title_sequence": {
-                "start": "empty sky ready for title",
-                "end": "elegant title text STORMLIGHT INTO THE TEMPEST prominently displayed"
+                "start": "empty sky with dramatic clouds, clear space for title overlay",
+                "end": "same composition with dramatic sky, clear central area for title overlay"
             },
             "kaladin_intro": {
                 "start": "close-up focus on face and expression",
@@ -194,10 +197,22 @@ class StyleframeManager:
             "end": "closer detailed view"
         })
         
+        # Base prompt components with text avoidance (simplified to avoid weight conflicts)
+        text_avoidance = "--no text --no typography"
+        base_prompt = f"{base_description} {style_keywords} dramatic lighting Arcane style by Fortiche {text_avoidance} --style raw --ar 16:9 --q 2"
+        
         prompts = {
-            "start_frame": f"{base_description} {variations['start']} {style_keywords} dramatic lighting Arcane style by Fortiche --style raw --ar 16:9 --q 2",
-            "end_frame": f"{base_description} {variations['end']} {style_keywords} dramatic lighting Arcane style by Fortiche --style raw --ar 16:9 --q 2"
+            "start_frame": f"{base_description} {variations['start']} {style_keywords} dramatic lighting Arcane style by Fortiche {text_avoidance} --style raw --ar 16:9 --q 2"
         }
+        
+        # End frame uses start frame as style reference if available
+        if start_frame_path:
+            prompts["end_frame_variation"] = f"{variations['end']} {style_keywords} dramatic lighting {text_avoidance}"
+            prompts["end_frame_full"] = f"{base_description} {variations['end']} {style_keywords} dramatic lighting Arcane style by Fortiche {text_avoidance} --style raw --ar 16:9 --q 2"
+            prompts["workflow_note"] = "WEB UI WORKFLOW: 1) Generate start frame, 2) Upload start frame to Midjourney web UI, 3) Use 'Vary (Region)' or image+text prompt with the variation text above. Text will be added in post-production."
+        else:
+            prompts["end_frame"] = f"{base_description} {variations['end']} {style_keywords} dramatic lighting Arcane style by Fortiche {text_avoidance} --style raw --ar 16:9 --q 2"
+            prompts["workflow_note"] = "WORKFLOW: 1) Generate start frame first, 2) Use Midjourney web UI to upload start frame and create variation for end frame. Text will be added in post-production."
         
         return prompts
     
@@ -259,11 +274,150 @@ class StyleframeManager:
             f.write("=" * 50 + "\n")
             f.write(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
             
+            # Always show start frame first and clearly
+            if "start_frame" in prompts:
+                f.write("🎬 STEP 1 - Generate Start Frame:\n")
+                f.write(f"{prompts['start_frame']}\n\n")
+            
+            # Show workflow note
+            if "workflow_note" in prompts:
+                f.write("📋 Next Steps:\n")
+                f.write(f"{prompts['workflow_note']}\n\n")
+            
+            # Show other prompts for reference
+            f.write("📝 Reference (for later steps):\n")
             for frame_type, prompt in prompts.items():
-                f.write(f"{frame_type.replace('_', ' ').title()}:\n")
-                f.write(f"{prompt}\n\n")
+                if frame_type not in ["start_frame", "workflow_note"]:
+                    f.write(f"{frame_type.replace('_', ' ').title()}:\n")
+                    f.write(f"{prompt}\n\n")
         
         console.print(f"💾 Saved: {filepath}")
+
+    def interactive_workflow(self, scene_name: str, base_description: str) -> None:
+        """Interactive workflow that walks user through the entire process"""
+        console.print(Panel.fit(
+            f"🎬 Interactive Styleframe Workflow for [bold cyan]{scene_name}[/bold cyan]",
+            style="bold blue"
+        ))
+        
+        # Step 1: Generate prompts
+        console.print("\n[bold yellow]Step 1: Generating Midjourney prompts...[/bold yellow]")
+        prompts = self.generate_midjourney_prompts(scene_name, base_description)
+        
+        # Display start frame prompt (plain text for easy copying)
+        console.print("\n[bold green]🎨 Copy this prompt to Midjourney:[/bold green]")
+        console.print("=" * 80)
+        console.print(prompts["start_frame"])
+        console.print("=" * 80)
+        
+        # Wait for user to generate start frame
+        console.print("\n[bold yellow]Step 2: Generate your start frame[/bold yellow]")
+        console.print("1. Copy the prompt above")
+        console.print("2. Paste it into Midjourney")
+        console.print("3. Generate and save your favorite result")
+        
+        if not Confirm.ask("\nHave you generated and saved your start frame?"):
+            console.print("❌ Come back when you have your start frame ready!")
+            return
+        
+        # Step 3: Organize start frame
+        console.print("\n[bold yellow]Step 3: Organize your start frame[/bold yellow]")
+        while True:
+            start_frame_path = Prompt.ask("Enter the path to your start frame image")
+            start_frame_path = Path(start_frame_path)
+            
+            if start_frame_path.exists():
+                break
+            else:
+                console.print(f"❌ File not found: {start_frame_path}")
+                if not Confirm.ask("Try again?"):
+                    return
+        
+        # Organize the start frame
+        try:
+            entry = self.organize_styleframe(
+                start_frame_path,
+                scene_name,
+                "start",
+                f"{scene_name} start frame - interactive workflow",
+                prompts["start_frame"]
+            )
+            console.print(f"✅ Start frame organized: {entry['path']}")
+        except Exception as e:
+            console.print(f"❌ Error organizing start frame: {e}")
+            return
+        
+        # Step 4: Generate end frame with style reference
+        console.print("\n[bold yellow]Step 4: Generate matching end frame[/bold yellow]")
+        console.print("Now we'll create an end frame that perfectly matches your start frame style.")
+        
+        # Generate prompts with start frame reference
+        ref_prompts = self.generate_midjourney_prompts(scene_name, base_description, str(entry['path']))
+        
+        console.print("\n[bold cyan]Option A: Midjourney Web UI (Recommended)[/bold cyan]")
+        console.print("1. Go to Midjourney web UI")
+        console.print("2. Upload your start frame")
+        console.print("3. Use 'Vary (Region)' and select the sky area")
+        console.print("4. Use this prompt for the variation:")
+        
+        if "end_frame_variation" in ref_prompts:
+            console.print("\n[bold green]🎨 Variation Prompt:[/bold green]")
+            console.print("=" * 60)
+            console.print(ref_prompts["end_frame_variation"])
+            console.print("=" * 60)
+        
+        console.print("\n[bold cyan]Option B: Full Prompt[/bold cyan]")
+        if "end_frame_full" in ref_prompts:
+            console.print("\n[bold blue]🎨 Full End Frame Prompt:[/bold blue]")
+            console.print("=" * 80)
+            console.print(ref_prompts["end_frame_full"])
+            console.print("=" * 80)
+        
+        # Wait for end frame generation
+        if not Confirm.ask("\nHave you generated your end frame?"):
+            console.print("💾 Prompts saved to file for later use")
+            self._save_prompts_to_files(scene_name, ref_prompts)
+            return
+        
+        # Step 5: Organize end frame
+        console.print("\n[bold yellow]Step 5: Organize your end frame[/bold yellow]")
+        while True:
+            end_frame_path = Prompt.ask("Enter the path to your end frame image")
+            end_frame_path = Path(end_frame_path)
+            
+            if end_frame_path.exists():
+                break
+            else:
+                console.print(f"❌ File not found: {end_frame_path}")
+                if not Confirm.ask("Try again?"):
+                    return
+        
+        # Organize the end frame
+        try:
+            end_entry = self.organize_styleframe(
+                end_frame_path,
+                scene_name,
+                "end",
+                f"{scene_name} end frame - interactive workflow",
+                ref_prompts.get("end_frame_variation", ref_prompts.get("end_frame_full", ""))
+            )
+            console.print(f"✅ End frame organized: {end_entry['path']}")
+        except Exception as e:
+            console.print(f"❌ Error organizing end frame: {e}")
+            return
+        
+        # Step 6: Success summary
+        console.print(Panel.fit(
+            f"🎉 [bold green]Success![/bold green]\n\n"
+            f"✅ Start frame: {entry['path']}\n"
+            f"✅ End frame: {end_entry['path']}\n\n"
+            f"Your {scene_name} styleframes are ready for Veo3 video generation!",
+            style="bold green"
+        ))
+        
+        # Save prompts for reference
+        self._save_prompts_to_files(scene_name, ref_prompts)
+        console.print(f"💾 All prompts saved for future reference")
 
 
 def main():
@@ -289,11 +443,17 @@ def main():
     prompts_parser.add_argument("description", help="Base scene description")
     prompts_parser.add_argument("--save", action="store_true",
                                help="Save prompts to files in 02_prompts/midjourney/")
+    prompts_parser.add_argument("--start-ref", help="Path to start frame for style reference")
     
     # Get reference command
     ref_parser = subparsers.add_parser("get-ref", help="Get best reference image for scene")
     ref_parser.add_argument("scene_name", help="Scene name")
     ref_parser.add_argument("--type", choices=["start", "end"], default="start", help="Preferred frame type")
+    
+    # Interactive workflow command
+    interactive_parser = subparsers.add_parser("interactive", help="Interactive workflow for complete styleframe creation")
+    interactive_parser.add_argument("scene_name", help="Scene name")
+    interactive_parser.add_argument("description", help="Base scene description")
     
     args = parser.parse_args()
     
@@ -320,12 +480,16 @@ def main():
         manager.create_scene_report(args.scene)
     
     elif args.command == "prompts":
-        prompts = manager.generate_midjourney_prompts(args.scene_name, args.description)
+        start_ref = getattr(args, 'start_ref', None)
+        prompts = manager.generate_midjourney_prompts(args.scene_name, args.description, start_ref)
         console.print(f"\n🎨 Midjourney Prompts for {args.scene_name}:\n")
         
         for frame_type, prompt in prompts.items():
-            console.print(f"[bold cyan]{frame_type.replace('_', ' ').title()}:[/bold cyan]")
-            console.print(f"{prompt}\n")
+            if frame_type == "workflow_note":
+                console.print(f"[bold yellow]📋 {prompt}[/bold yellow]\n")
+            else:
+                console.print(f"[bold cyan]{frame_type.replace('_', ' ').title()}:[/bold cyan]")
+                console.print(f"{prompt}\n")
         
         # Save to files if requested
         if hasattr(args, 'save') and args.save:
@@ -337,6 +501,9 @@ def main():
             console.print(f"📸 Best reference for {args.scene_name}: {ref_path}")
         else:
             console.print(f"❌ No reference images found for {args.scene_name}")
+    
+    elif args.command == "interactive":
+        manager.interactive_workflow(args.scene_name, args.description)
 
 
 if __name__ == "__main__":

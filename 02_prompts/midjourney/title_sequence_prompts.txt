@@ -1,10 +1,14 @@
 Midjourney Prompts for title_sequence
 ==================================================
-Generated: 2025-08-15 17:29:51
+Generated: 2025-08-15 18:02:22
 
-Start Frame:
-Sweeping aerial shot across alien Roshar landscape with strange rock formations jutting from ground, no grass only crystalline plants and moss, alien beauty with stormy skies overhead empty sky ready for title epic cinematic storm dramatic lighting Arcane style by Fortiche --style raw --ar 16:9 --q 2
+🎬 STEP 1 - Generate Start Frame:
+Sweeping aerial shot across alien Roshar landscape with strange rock formations jutting from ground, no grass only crystalline plants and moss, alien beauty with stormy skies overhead empty sky with dramatic clouds, clear space for title overlay epic cinematic storm dramatic lighting Arcane style by Fortiche --no text --no typography --style raw --ar 16:9 --q 2
 
+📋 Next Steps:
+WORKFLOW: 1) Generate start frame first, 2) Use Midjourney web UI to upload start frame and create variation for end frame. Text will be added in post-production.
+
+📝 Reference (for later steps):
 End Frame:
-Sweeping aerial shot across alien Roshar landscape with strange rock formations jutting from ground, no grass only crystalline plants and moss, alien beauty with stormy skies overhead elegant title text STORMLIGHT INTO THE TEMPEST prominently displayed epic cinematic storm dramatic lighting Arcane style by Fortiche --style raw --ar 16:9 --q 2
+Sweeping aerial shot across alien Roshar landscape with strange rock formations jutting from ground, no grass only crystalline plants and moss, alien beauty with stormy skies overhead same composition with dramatic sky, clear central area for title overlay epic cinematic storm dramatic lighting Arcane style by Fortiche --no text --no typography --style raw --ar 16:9 --q 2
 
