@@ -27,7 +27,7 @@ python3 tools/generate_veo3.py "Sweeping aerial shot" --scene title_sequence --l
    ```
 4. **AI Prompt Enhancement** - Optional GPT-4-mini enhancement with cost transparency
 5. **Model & Cost Selection** - Choose between Veo 3 Fast ($3.20) or Standard ($6.00) with audio options
-6. **Visual Continuity** - Uses both start and end frames to shape the 8-second clip
+6. **Dual Frame Generation** - Uses Veo 3's `image` + `lastFrame` API for perfect transitions
 
 ## ✅ **Production Ready**
 
@@ -166,7 +166,7 @@ python3 tools/pipeline_monitor.py --health-check
 - **🎯 Context-Aware**: Stormlight and Arcane style specialization
 
 ### **Core Pipeline Features**
-- **🎭 Dual Frame System**: Uses both start and end frames to shape 8-second video transitions
+- **🎭 Dual Frame System**: Uses Veo 3's `image` + `lastFrame` API for precise start→end transitions
 - **✅ Styleframe Validation**: Pre-generation checks with clear status display
 - **📸 Smart References**: Auto-discovery and validation of scene styleframes
 - **💰 Cost Tracking**: Real-time monitoring with transparent pricing ($3.20 Fast, $6.00 Standard)

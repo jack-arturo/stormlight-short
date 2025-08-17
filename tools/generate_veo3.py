@@ -349,35 +349,55 @@ class Veo3Generator:
                 elif end_frame:
                     reference_image = end_frame
             
-            # Add reference images to payload
-            if reference_image and reference_image.exists():
-                print(f"🖼️  Using reference image: {reference_image}")
+            # Add reference images to payload (Veo 3 supports both start and end frames!)
+            if start_frame or end_frame:
                 
-                # Read and encode the primary image
-                with open(reference_image, 'rb') as img_file:
-                    img_data = base64.b64encode(img_file.read()).decode('utf-8')
+                # Add start frame (image parameter)
+                if start_frame and start_frame.exists():
+                    print(f"🎬 Using start frame: {start_frame.name}")
+                    with open(start_frame, 'rb') as img_file:
+                        img_data = base64.b64encode(img_file.read()).decode('utf-8')
+                    
+                    # Determine MIME type
+                    mime_type = "image/jpeg"
+                    if start_frame.suffix.lower() in ['.png']:
+                        mime_type = "image/png"
+                    elif start_frame.suffix.lower() in ['.webp']:
+                        mime_type = "image/webp"
+                    
+                    payload["instances"][0]["image"] = {
+                        "bytesBase64Encoded": img_data,
+                        "mimeType": mime_type
+                    }
                 
-                # Determine MIME type from file extension
-                mime_type = "image/jpeg"
-                if reference_image.suffix.lower() in ['.png']:
-                    mime_type = "image/png"
-                elif reference_image.suffix.lower() in ['.webp']:
-                    mime_type = "image/webp"
+                # Add end frame (lastFrame parameter) 
+                if end_frame and end_frame.exists():
+                    print(f"🎯 Using end frame: {end_frame.name}")
+                    with open(end_frame, 'rb') as img_file:
+                        end_img_data = base64.b64encode(img_file.read()).decode('utf-8')
+                    
+                    # Determine MIME type for end frame
+                    end_mime_type = "image/jpeg"
+                    if end_frame.suffix.lower() in ['.png']:
+                        end_mime_type = "image/png"
+                    elif end_frame.suffix.lower() in ['.webp']:
+                        end_mime_type = "image/webp"
+                    
+                    payload["instances"][0]["lastFrame"] = {
+                        "bytesBase64Encoded": end_img_data,
+                        "mimeType": end_mime_type
+                    }
                 
-                payload["instances"][0]["image"] = {
-                    "bytesBase64Encoded": img_data,
-                    "mimeType": mime_type
-                }
-                
-                # Show both frames being used for Veo3 generation
-                if start_frame and end_frame and start_frame != end_frame:
-                    print(f"🎭 Start frame: {start_frame.name}")
-                    print(f"🎯 End frame: {end_frame.name}")
-                    print(f"💡 Using start frame as reference (API limitation: single image only)")
-                    print(f"🔮 Future: Composite image combining both frames for better transitions")
-                
+                # Show what's being used
+                if start_frame and end_frame:
+                    print(f"🎭 Perfect! Using BOTH start and end frames for 8-second transition")
+                elif start_frame:
+                    print(f"🎬 Using start frame only (no end frame available)")
+                elif end_frame:
+                    print(f"🎯 Using end frame only (no start frame available)")
+                    
             elif auto_discover_styleframes:
-                print(f"💡 No reference image found for scene '{scene_name}' - generating without reference")
+                print(f"💡 No reference frames found for scene '{scene_name}' - generating from prompt only")
             
             # Choose model based on settings
             model_name = "veo-3.0-fast-generate-preview" if use_fast_model else "veo-3.0-generate-preview"
@@ -424,7 +444,9 @@ class Veo3Generator:
                 "quality": "high",
                 "filename": filename,
                 "file_size_bytes": file_size,
-                "reference_image": str(reference_image) if reference_image else None,
+                "start_frame": str(start_frame.relative_to(self.project_root)) if start_frame else None,
+                "end_frame": str(end_frame.relative_to(self.project_root)) if end_frame else None,
+                "reference_image": str(reference_image) if reference_image else None,  # Legacy field
                 "notes": notes,
                 "operation_name": operation_name
             }
