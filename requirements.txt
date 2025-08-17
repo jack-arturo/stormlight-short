@@ -7,6 +7,9 @@ google-cloud-aiplatform>=1.38.0,<2.0.0
 # Gemini API for Veo 3 Video Generation
 google-generativeai>=0.8.0,<1.0.0
 
+# Google Gen AI SDK for advanced Veo 3 features (audio control, resolution)
+google-genai>=0.1.0
+
 # OpenAI API for LLM-powered prompt generation
 openai>=1.0.0,<2.0.0
 

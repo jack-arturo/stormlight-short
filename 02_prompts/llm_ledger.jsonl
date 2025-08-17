@@ -17,3 +17,15 @@
 {"timestamp": "2025-08-15T21:58:02.196993", "model": "gpt-4o-mini", "input_tokens": 150, "output_tokens": 342, "input_cost": 2.2e-05, "output_cost": 0.000205, "total_cost": 0.000228, "cumulative_cost": 0.000474}
 {"timestamp": "2025-08-15T22:03:31.404180", "model": "gpt-4o-mini", "input_tokens": 149, "output_tokens": 330, "input_cost": 2.2e-05, "output_cost": 0.000198, "total_cost": 0.00022, "cumulative_cost": 0.00022}
 {"timestamp": "2025-08-15T22:03:37.968209", "model": "gpt-4o-mini", "input_tokens": 149, "output_tokens": 317, "input_cost": 2.2e-05, "output_cost": 0.00019, "total_cost": 0.000213, "cumulative_cost": 0.000433}
+{"timestamp": "2025-08-16T03:54:01.022898", "model": "gpt-4o-mini", "input_tokens": 152, "output_tokens": 294, "input_cost": 2.3e-05, "output_cost": 0.000176, "total_cost": 0.000199, "cumulative_cost": 0.000199}
+{"timestamp": "2025-08-16T03:54:06.995617", "model": "gpt-4o-mini", "input_tokens": 152, "output_tokens": 379, "input_cost": 2.3e-05, "output_cost": 0.000227, "total_cost": 0.00025, "cumulative_cost": 0.000449}
+{"timestamp": "2025-08-16T04:17:19.360033", "model": "gpt-4o-mini", "input_tokens": 151, "output_tokens": 357, "input_cost": 2.3e-05, "output_cost": 0.000214, "total_cost": 0.000237, "cumulative_cost": 0.000237}
+{"timestamp": "2025-08-16T04:17:24.907199", "model": "gpt-4o-mini", "input_tokens": 151, "output_tokens": 326, "input_cost": 2.3e-05, "output_cost": 0.000196, "total_cost": 0.000218, "cumulative_cost": 0.000455}
+{"timestamp": "2025-08-17T18:32:02.247148", "model": "gpt-4o-mini", "input_tokens": 134, "output_tokens": 200, "input_cost": 2e-05, "output_cost": 0.00012, "total_cost": 0.00014, "cumulative_cost": 0.00014}
+{"timestamp": "2025-08-17T19:11:21.505569", "model": "gpt-4o-mini", "input_tokens": 126, "output_tokens": 200, "input_cost": 1.9e-05, "output_cost": 0.00012, "total_cost": 0.000139, "cumulative_cost": 0.000139}
+{"timestamp": "2025-08-17T19:26:00.723867", "model": "gpt-4o-mini", "input_tokens": 135, "output_tokens": 198, "input_cost": 2e-05, "output_cost": 0.000119, "total_cost": 0.000139, "cumulative_cost": 0.000139}
+{"timestamp": "2025-08-17T19:36:19.726323", "model": "gpt-4o-mini", "input_tokens": 114, "output_tokens": 148, "input_cost": 1.7e-05, "output_cost": 8.9e-05, "total_cost": 0.000106, "cumulative_cost": 0.000106}
+{"timestamp": "2025-08-17T19:36:48.905168", "model": "gpt-4o-mini", "input_tokens": 116, "output_tokens": 200, "input_cost": 1.7e-05, "output_cost": 0.00012, "total_cost": 0.000137, "cumulative_cost": 0.000137}
+{"timestamp": "2025-08-17T19:37:04.370618", "model": "gpt-4o-mini", "input_tokens": 116, "output_tokens": 153, "input_cost": 1.7e-05, "output_cost": 9.2e-05, "total_cost": 0.000109, "cumulative_cost": 0.000109}
+{"timestamp": "2025-08-17T19:45:40.984772", "model": "gpt-4o-mini", "input_tokens": 115, "output_tokens": 200, "input_cost": 1.7e-05, "output_cost": 0.00012, "total_cost": 0.000137, "cumulative_cost": 0.000137}
+{"timestamp": "2025-08-17T19:45:56.994985", "model": "gpt-4o-mini", "input_tokens": 116, "output_tokens": 156, "input_cost": 1.7e-05, "output_cost": 9.4e-05, "total_cost": 0.000111, "cumulative_cost": 0.000111}

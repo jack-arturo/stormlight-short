@@ -144,7 +144,25 @@ class StormlightControl:
                         completed += 1
                     else:
                         active += 1
-                    total_cost += 0.15
+                    # Cost estimation based on official Veo pricing (per second)
+                    duration = entry.get('duration', 8)  # Default 8 seconds
+                    model = entry.get('model', 'veo-3.0-fast-generate-preview')  # Default to fast model
+                    
+                    # Check for audio setting in new format or fallback to notes
+                    has_audio = entry.get('generate_audio', False)
+                    if not has_audio and "with audio" in entry.get('notes', '').lower():
+                        has_audio = True
+                    
+                    # Determine cost per second based on model and audio
+                    if 'fast' in model.lower():
+                        # Veo 3 Fast pricing
+                        cost_per_second = 0.40 if has_audio else 0.25
+                    else:
+                        # Standard Veo 3 pricing  
+                        cost_per_second = 0.75 if has_audio else 0.50
+                    
+                    estimated_cost = duration * cost_per_second
+                    total_cost += estimated_cost
                 
                 status['video_gen'] = {
                     'status': f'🎬 {completed} Complete, {active} Active',
@@ -202,9 +220,10 @@ class StormlightControl:
         vg_status = status.get('video_gen', {})
         vg_card = Panel(
             f"""⚡ Status: {vg_status.get('status', '❓ Unknown')}
-✅ Completed: [bold green]{vg_status.get('completed', 0)}[/bold green] | 💰 Cost: [bold red]${vg_status.get('cost', 0):.2f}[/bold red]
+✅ Completed: [bold green]{vg_status.get('completed', 0)}[/bold green] | 💰 Est: [bold red]${vg_status.get('cost', 0):.2f}[/bold red]
 [dim italic]Veo 3 via Gemini API[/dim italic]
 [bold cyan]🤖 AI Prompt Enhancement![/bold cyan]
+[dim yellow]💡 Fast: $2/video, Standard: $4/video (+audio doubles cost)[/dim yellow]
 [bold green on black] 🎥 Press 'V' to generate! 🎥 [/bold green on black]""",
             title="🎬 Video Gen 🎬",
             border_style="bright_magenta" if vg_status.get('health') == 'healthy' else "bright_yellow",
@@ -267,7 +286,7 @@ class StormlightControl:
             "🎨 Styleframes", f"[bold magenta]{sf_status.get('frames', 0)}[/bold magenta]"
         )
         stats_table.add_row(
-            "💰 Total Cost", f"[bold red]${vg_status.get('cost', 0):.2f}[/bold red]",
+            "💰 Est. Cost", f"[bold red]${vg_status.get('cost', 0):.2f}[/bold red]",
             "📝 Scenes", f"[bold yellow]{sf_status.get('scenes', 0)}[/bold yellow]"
         )
         stats_table.add_row(
@@ -316,6 +335,11 @@ class StormlightControl:
         # Check terminal size for responsive design
         term_width, term_height = self.console.size
         
+        # Calculate 90% height usage
+        content_height = int(term_height * 0.9)
+        padding_total = term_height - content_height
+        top_padding = padding_total
+        
         # Adaptive layout
         layout = Layout()
         
@@ -355,12 +379,18 @@ class StormlightControl:
         main_panel = Panel(
             content_layout,
             title="🌪️ STORMLIGHT CONTROL CENTER 🌪️",
-            border_style="bright_blue",
             padding=(0, 0)
         )
         
-        # Final layout with border
-        layout.add_split(main_panel)
+        # Create responsive layout using 90% of terminal height
+        padded_layout = Layout()
+        padded_layout.split_column(
+            Layout(size=top_padding),  # Top padding
+            Layout(main_panel, size=content_height),  # Main content at 90% height
+        )
+        
+        # Final layout with responsive sizing
+        layout.add_split(padded_layout)
         
         return layout
     
@@ -396,10 +426,12 @@ class StormlightControl:
                     except KeyboardInterrupt:
                         console.print("\n[green]✨ Returned to Control Center! ✨[/green]")
             elif tool == 'V':
-                console.print("\n[yellow]Video Generation - Veo 3[/yellow]")
-                console.print("Usage examples:")
-                console.print("python3 tools/generate_veo3.py 'Your prompt here' --scene scene_name")
-                subprocess.run(commands[tool])
+                console.print("\n[bold yellow]🎬✨ Video Generator - Interactive Mode ✨🎬[/bold yellow]")
+                console.print("[dim]💡 Tip: Press Ctrl+C to return to Control Center![/dim]")
+                try:
+                    subprocess.run(['python3', 'tools/generate_veo3.py'])
+                except KeyboardInterrupt:
+                    console.print("\n[green]✨ Returned to Control Center! ✨[/green]")
             elif tool == 'D':
                 console.print("\n[yellow]Story Development Files:[/yellow]")
                 subprocess.run(commands[tool])
