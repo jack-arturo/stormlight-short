@@ -338,22 +338,22 @@ class Veo3Generator:
                 ]
             }
             
-            # Auto-discover reference image if not provided
+            # Auto-discover start and end frames for the scene
+            start_frame, end_frame = None, None
             if not reference_image and auto_discover_styleframes:
-                # For V7 Style References workflow: prefer current scene's start frame
-                # but fall back to previous clip's end frame for continuity
-                reference_image = self._find_best_reference_image(scene_name)
+                start_frame, end_frame = self._get_scene_frame_pair(scene_name)
                 
-                # If no current scene frames, try previous clip's end frame
-                if not reference_image:
-                    reference_image = self._get_previous_clip_end_frame(scene_name)
-                    if reference_image:
-                        print(f"🔗 Using previous clip's end frame for continuity: {reference_image.name}")
+                # Choose primary reference image (prefer start frame)
+                if start_frame:
+                    reference_image = start_frame
+                elif end_frame:
+                    reference_image = end_frame
             
-            # Add reference image if available
+            # Add reference images to payload
             if reference_image and reference_image.exists():
                 print(f"🖼️  Using reference image: {reference_image}")
-                # Read and encode the image
+                
+                # Read and encode the primary image
                 with open(reference_image, 'rb') as img_file:
                     img_data = base64.b64encode(img_file.read()).decode('utf-8')
                 
@@ -368,6 +368,14 @@ class Veo3Generator:
                     "bytesBase64Encoded": img_data,
                     "mimeType": mime_type
                 }
+                
+                # Show both frames being used for Veo3 generation
+                if start_frame and end_frame and start_frame != end_frame:
+                    print(f"🎭 Start frame: {start_frame.name}")
+                    print(f"🎯 End frame: {end_frame.name}")
+                    print(f"💡 Using start frame as reference (API limitation: single image only)")
+                    print(f"🔮 Future: Composite image combining both frames for better transitions")
+                
             elif auto_discover_styleframes:
                 print(f"💡 No reference image found for scene '{scene_name}' - generating without reference")
             
@@ -579,42 +587,42 @@ class Veo3Generator:
         
         return None
     
-    def _get_previous_clip_end_frame(self, scene_name: str) -> Optional[Path]:
-        """Get the end frame from the previous clip for visual continuity"""
-        # Scene sequence from Act I - using actual styleframe names for consistency
-        act1_sequence = [
-            "title_sequence",
-            "shattered_plains_reveal",  # or "the_shattered_plains" 
-            "kaladin_introduction",
-            "adolin_introduction", 
-            "the_magic_system",  # matches styleframes
-            "dalinar_introduction",
-            "spren_bonds",
-            "the_parshendi",  # matches styleframes
-            "highstorm_approaching"
-        ]
+
+    
+    def _get_scene_frame_pair(self, scene_name: str) -> Tuple[Optional[Path], Optional[Path]]:
+        """Get both start and end frames for a scene to use with Veo3"""
+        metadata_file = self.styleframes_dir / "styleframes_metadata.json"
+        
+        start_frame = None
+        end_frame = None
+        
+        if not metadata_file.exists():
+            return start_frame, end_frame
         
         try:
-            current_index = act1_sequence.index(scene_name)
-            if current_index > 0:  # Not the first clip
-                prev_scene = act1_sequence[current_index - 1]
-                
-                # Look for the previous scene's end frame
-                metadata_file = self.styleframes_dir / "styleframes_metadata.json"
-                if metadata_file.exists():
-                    with open(metadata_file, 'r') as f:
-                        metadata = json.load(f)
-                    
-                    prev_scene_data = metadata.get(prev_scene, {})
-                    if prev_scene_data.get('end'):
-                        latest = max(prev_scene_data['end'], key=lambda x: x["timestamp"])
-                        ref_path = self.project_root / latest["path"]
-                        if ref_path.exists():
-                            return ref_path
-        except (ValueError, json.JSONDecodeError, KeyError):
+            with open(metadata_file, 'r') as f:
+                metadata = json.load(f)
+            
+            scene_data = metadata.get(scene_name, {})
+            
+            # Get most recent start frame
+            if scene_data.get('start'):
+                latest_start = max(scene_data['start'], key=lambda x: x["timestamp"])
+                start_path = self.project_root / latest_start["path"]
+                if start_path.exists():
+                    start_frame = start_path
+            
+            # Get most recent end frame
+            if scene_data.get('end'):
+                latest_end = max(scene_data['end'], key=lambda x: x["timestamp"])
+                end_path = self.project_root / latest_end["path"]
+                if end_path.exists():
+                    end_frame = end_path
+        
+        except (json.JSONDecodeError, KeyError):
             pass
         
-        return None
+        return start_frame, end_frame
     
     def list_pending_clips(self) -> List[Dict[str, Any]]:
         """List all pending clips from story development scripts"""
@@ -710,19 +718,21 @@ class Veo3Generator:
                             else:
                                 console.print(f"   🎯 End frame: [yellow]✗[/yellow]")
                             
-                            # Show reference images being used
-                            if styleframes_status['reference_path']:
-                                console.print(f"   📸 Current scene: [dim cyan]{styleframes_status['reference_path']}[/dim cyan]")
+                            # Show what frames will be used for Veo3 generation
+                            start_frame_path, end_frame_path = self._get_scene_frame_pair(scene_name)
                             
-                            # Check for previous clip's end frame for V7 continuity
-                            if styleframes_status['has_previous_end']:
-                                console.print(f"   🔗 Previous clip: [dim cyan]{styleframes_status['previous_end_path']}[/dim cyan]")
-                                if styleframes_status['has_start'] or styleframes_status['has_end']:
-                                    console.print(f"   [dim yellow]💡 V7 Style References: Using both current + previous frames for continuity[/dim yellow]")
-                                else:
-                                    console.print(f"   [dim yellow]💡 Will use previous clip's end frame for continuity[/dim yellow]")
+                            if start_frame_path and end_frame_path:
+                                console.print(f"   🎬 Start frame: [dim cyan]{start_frame_path.relative_to(self.project_root)}[/dim cyan]")
+                                console.print(f"   🎯 End frame: [dim cyan]{end_frame_path.relative_to(self.project_root)}[/dim cyan]")
+                                console.print(f"   [dim yellow]💡 Veo3 will generate 8-second transition between these frames[/dim yellow]")
+                            elif start_frame_path:
+                                console.print(f"   🎬 Start frame: [dim cyan]{start_frame_path.relative_to(self.project_root)}[/dim cyan]")
+                                console.print(f"   🎯 End frame: [yellow]✗[/yellow] [dim](will use start frame only)[/dim]")
+                            elif end_frame_path:
+                                console.print(f"   🎬 Start frame: [yellow]✗[/yellow] [dim](missing)[/dim]")
+                                console.print(f"   🎯 End frame: [dim cyan]{end_frame_path.relative_to(self.project_root)}[/dim cyan]")
                             else:
-                                console.print(f"   🔗 Previous clip: [yellow]✗[/yellow] [dim](first clip or missing)[/dim]")
+                                console.print(f"   📸 No frames available - generating from prompt only")
                         
                         # Step 1: Show the storyboard prompt
                         original_prompt = selected_clip.get('start_prompt')
@@ -939,9 +949,7 @@ class Veo3Generator:
             'has_any': False,
             'has_start': False,
             'has_end': False,
-            'reference_path': None,
-            'has_previous_end': False,
-            'previous_end_path': None
+            'reference_path': None
         }
         
         if not metadata_file.exists():
@@ -976,12 +984,7 @@ class Veo3Generator:
                         status['reference_path'] = str(ref_path.relative_to(self.project_root))
                         break
             
-            # Check for previous clip's end frame for V7 continuity
-            prev_end_frame = self._get_previous_clip_end_frame(scene_name)
-            if prev_end_frame:
-                status['has_previous_end'] = True
-                status['previous_end_path'] = str(prev_end_frame.relative_to(self.project_root))
-                status['has_any'] = True  # Previous end frame counts as available reference
+            # Note: Removed previous clip logic - focusing on current scene's start/end frames only
         
         except (json.JSONDecodeError, KeyError):
             pass

@@ -15,13 +15,19 @@ python3 tools/styleframe_manager.py interactive title_sequence "Sweeping aerial 
 python3 tools/generate_veo3.py "Sweeping aerial shot" --scene title_sequence --llm-prompt --mood heroic
 ```
 
-### 🎯 **New Interactive Workflow with AI Enhancement**
-1. **Run interactive command** - Step-by-step guidance with AI option
-2. **Choose AI enhancement** - Generate cinematic prompts with variations
-3. **Generate start frame** in Midjourney - Copy/paste AI-enhanced prompts
-4. **Save to `tmp/tmp.png`** - Auto-optimizes to JPG (9MB→1MB)
-5. **Use Midjourney Editor** - Erase/Smart Erase for matching end frame
-6. **Auto-organization** - Files organized with enhanced prompts saved to markdown
+### 🎯 **Enhanced Interactive Workflow (v2.0)**
+1. **Launch Interactive Mode** - `python3 tools/generate_veo3.py` (no args = interactive)
+2. **Smart Scene Detection** - Auto-detects pending clips from story development
+3. **Styleframe Validation** - Shows start/end frame status before generation:
+   ```
+   ✅ Styleframes available:
+      🎬 Start frame: ✓  📸 path/to/start_frame.jpg
+      🎯 End frame: ✓   📸 path/to/end_frame.jpg
+      💡 Veo3 will generate 8-second transition between these frames
+   ```
+4. **AI Prompt Enhancement** - Optional GPT-4-mini enhancement with cost transparency
+5. **Model & Cost Selection** - Choose between Veo 3 Fast ($3.20) or Standard ($6.00) with audio options
+6. **Visual Continuity** - Uses both start and end frames to shape the 8-second clip
 
 ## ✅ **Production Ready**
 
@@ -107,16 +113,21 @@ python3 tools/styleframe_manager.py organize image.png kaladin_intro start
 python3 tools/styleframe_manager.py organize image.png kaladin_intro end
 ```
 
-### 3. Generate Videos (Now with AI-Enhanced Prompts!)
+### 3. Generate Videos (Enhanced Interactive Mode!)
 ```bash
-# AI-enhanced cinematic prompts with camera movement and mood
+# 🌟 NEW: Interactive mode with full styleframe validation (RECOMMENDED)
+python3 tools/generate_veo3.py
+# → Shows pending clips from story development
+# → Validates start/end frame availability  
+# → AI enhancement with cost transparency
+# → Model selection (Fast/Standard + Audio options)
+
+# Manual generation with AI enhancement
 python3 tools/generate_veo3.py "Kaladin stands defiantly" --scene kaladin_intro --llm-prompt --camera "slow push-in" --mood "heroic"
 
-# Complete video + audio generation
-python3 tools/generate_veo3.py "Bridge crew charges across chasm" --scene bridge_run --with-audio
-
-# Traditional prompt (without AI)
-python3 tools/generate_veo3.py "Kaladin stands defiantly as storm approaches" --scene kaladin_intro
+# Cost-controlled generation
+python3 tools/generate_veo3.py "Bridge crew charges" --scene bridge_run --fast --with-audio  # $3.20
+python3 tools/generate_veo3.py "Epic battle scene" --scene combat --standard --no-audio      # $4.00
 ```
 
 ### 4. Generate Audio Components
@@ -155,8 +166,10 @@ python3 tools/pipeline_monitor.py --health-check
 - **🎯 Context-Aware**: Stormlight and Arcane style specialization
 
 ### **Core Pipeline Features**
-- **📸 Smart References**: Auto-discovery of styleframes for video generation
-- **💰 Cost Tracking**: Real-time monitoring of generation costs (both AI and video)
+- **🎭 Dual Frame System**: Uses both start and end frames to shape 8-second video transitions
+- **✅ Styleframe Validation**: Pre-generation checks with clear status display
+- **📸 Smart References**: Auto-discovery and validation of scene styleframes
+- **💰 Cost Tracking**: Real-time monitoring with transparent pricing ($3.20 Fast, $6.00 Standard)
 - **🔄 Take Management**: Automatic versioning and iteration tracking
 - **📊 Pipeline Health**: Comprehensive monitoring and status reporting
 - **🔒 Secure Setup**: Environment-based API key management (OpenAI + Gemini)
@@ -220,8 +233,11 @@ python3 tools/pipeline_monitor.py --health-check
 
 ### 💰 **Cost Estimates**
 
-#### **Current Pipeline Costs**
-- **Veo 3 Generation**: ~$0.15 per 8-second clip (720p)
+#### **Current Pipeline Costs (Updated Pricing)**
+- **Veo 3 Fast + Audio**: $3.20 per 8-second clip (720p, recommended)
+- **Veo 3 Fast, Video Only**: $2.00 per 8-second clip (720p)
+- **Veo 3 Standard + Audio**: $6.00 per 8-second clip (720p, highest quality)
+- **Veo 3 Standard, Video Only**: $4.00 per 8-second clip (720p)
 - **GPT-4-mini Enhancement**: ~$0.01-0.02 per prompt generation (with variations)
 - **Midjourney**: $10-30/month subscription (unlimited generations)
 - **Storage**: Minimal (local files, optional cloud backup)
