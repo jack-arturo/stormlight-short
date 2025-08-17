@@ -374,7 +374,7 @@ class PromptEnhancer:
         response = self.llm.generate(
             prompt=f"Enhance this video prompt: {base_description}\nElements: {', '.join(temporal_elements)}",
             system_prompt=system_prompt,
-            max_tokens=200,
+            max_tokens=800,  # Increased from 200 to prevent truncation
             temperature=0.6
         )
         
